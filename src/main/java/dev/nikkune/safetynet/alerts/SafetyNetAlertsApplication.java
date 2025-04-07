@@ -1,4 +1,4 @@
-package dev.nikkune.safetynet_alerts;
+package dev.nikkune.safetynet.alerts;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
