@@ -6,7 +6,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get all residents covered by a fire station
 
-```http
+```
   GET /firestation?stationNumber=${station_number}
 ```
 
@@ -16,7 +16,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get all children at the given address
 
-```http
+```
   GET /childAlert?address=${address}
 ```
 
@@ -26,7 +26,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get all phone numbers of residents covered by a fire station
 
-```http
+```
   GET /phoneAlert?firestation=${firestation_number}
 ```
 
@@ -36,7 +36,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get all residents at a given address and the fire station covering them
 
-```http
+```
   GET /fire?address=${address}
 ```
 
@@ -46,7 +46,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get all households covered by a list of fire stations
 
-```http
+```
   GET /flood/stations?stations=${stations}
 ```
 
@@ -56,7 +56,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get information about residents by last name
 
-```http
+```
   GET /personInfo?lastName=${lastName}
 ```
 
@@ -66,7 +66,7 @@ The SafetyNet Alerts application sends information to emergency service systems.
 
 ### Get email addresses of all residents in a city
 
-```http
+```
   GET /communityEmail?city=${city}
 ```
 
