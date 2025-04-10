@@ -16,14 +16,14 @@ import org.springframework.core.io.WritableResource;
 import java.util.List;
 
 @Configuration
-public class DataLoaderConfig {
+public class JsonDatabase {
 
     private final ResourceLoader resourceLoader;
     private List<Person> people;
     private List<FireStation> fireStations;
     private List<MedicalRecord> medicalRecords;
 
-    public DataLoaderConfig(ResourceLoader resourceLoader) {
+    public JsonDatabase(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
