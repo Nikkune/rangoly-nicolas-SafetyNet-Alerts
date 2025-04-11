@@ -42,9 +42,15 @@ public class JsonDatabase {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode rootNode = objectMapper.readTree(dataFile.getInputStream());
-            this.people = objectMapper.convertValue(rootNode.get("persons").traverse(), objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
-            this.fireStations = objectMapper.convertValue(rootNode.get("firestations").traverse(), objectMapper.getTypeFactory().constructCollectionType(List.class, FireStation.class));
-            this.medicalRecords = objectMapper.convertValue(rootNode.get("medicalrecords").traverse(), objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class));
+            people = objectMapper.convertValue(rootNode.get("persons"), objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
+            fireStations = objectMapper.convertValue(rootNode.get("firestations"), objectMapper.getTypeFactory().constructCollectionType(List.class, FireStation.class));
+            medicalRecords = objectMapper.convertValue(rootNode.get("medicalrecords"), objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class));
+
+            people.forEach(person -> {
+                MedicalRecord medicalRecord = medicalRecords.stream().filter(record -> record.getFirstName().equals(person.getFirstName()) && record.getLastName().equals(person.getLastName())).findFirst().orElse(null);
+                person.setMedicalRecord(medicalRecord);
+            });
+            fireStations.forEach(fireStation -> fireStation.setPersons(people.stream().filter(person -> person.getAddress().equals(fireStation.getAddress())).toList()));
         } catch (Exception e) {
             throw new RuntimeException("Failed to load data from data.json",e);
         }
@@ -66,7 +72,7 @@ public class JsonDatabase {
             // Crete a new root node to structure the data
             ObjectNode rootNode = objectMapper.createObjectNode();
 
-            // Set the data
+            // Set the data into the root node
             rootNode.set("persons", objectMapper.convertValue(people, objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class)));
             rootNode.set("firestations", objectMapper.convertValue(fireStations, objectMapper.getTypeFactory().constructCollectionType(List.class, FireStation.class)));
             rootNode.set("medicalrecords", objectMapper.convertValue(medicalRecords, objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class)));
