@@ -38,7 +38,7 @@ public class JsonDatabase {
     }
 
     /**
-     * Load data from the classpath resource 'data.json'.
+     * Load data from resources 'data.json'.
      * <p>
      * The data is loaded in the following order: persons, firestations, medicalrecords.
      *
@@ -48,7 +48,7 @@ public class JsonDatabase {
      */
     @PostConstruct
     public void loadData() {
-        Resource dataFile = resourceLoader.getResource("classpath:data.json");
+        Resource dataFile = resourceLoader.getResource("data.json");
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode rootNode = objectMapper.readTree(dataFile.getInputStream());
