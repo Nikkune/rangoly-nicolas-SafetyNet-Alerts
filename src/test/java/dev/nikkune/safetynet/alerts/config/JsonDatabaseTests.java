@@ -1,14 +1,12 @@
-package dev.nikkune.safetynet.alerts;
+package dev.nikkune.safetynet.alerts.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.nikkune.safetynet.alerts.config.JsonDatabase;
 import dev.nikkune.safetynet.alerts.model.FireStation;
 import dev.nikkune.safetynet.alerts.model.MedicalRecord;
 import dev.nikkune.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.WritableResource;
@@ -20,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JsonDatabaseTest {
+public class JsonDatabaseTests {
     private JsonDatabase jsonDatabase;
     private ResourceLoader resourceLoader;
 
