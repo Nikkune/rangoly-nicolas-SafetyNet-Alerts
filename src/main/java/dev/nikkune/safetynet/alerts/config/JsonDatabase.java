@@ -2,6 +2,7 @@ package dev.nikkune.safetynet.alerts.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.nikkune.safetynet.alerts.model.FireStation;
 import dev.nikkune.safetynet.alerts.model.MedicalRecord;
@@ -15,6 +16,15 @@ import org.springframework.core.io.WritableResource;
 
 import java.util.List;
 
+/**
+ * The JsonDatabase class is responsible for loading and saving data from/to a JSON file.
+ * <p>
+ * It manages collections of `Person`, `FireStation`, and `MedicalRecord` objects.
+ * <p>
+ * The data is structured in a specific format and is loaded from the classpath resource 'data.json'.
+ * <p>
+ * This class is annotated with `@Configuration` to indicate that it provides Spring configuration.
+ */
 @Configuration
 public class JsonDatabase {
 
@@ -29,7 +39,7 @@ public class JsonDatabase {
 
     /**
      * Load data from the classpath resource 'data.json'.
-     *
+     * <p>
      * The data is loaded in the following order: persons, firestations, medicalrecords.
      *
      * @see #people()
@@ -52,18 +62,17 @@ public class JsonDatabase {
             });
             fireStations.forEach(fireStation -> fireStation.setPersons(people.stream().filter(person -> person.getAddress().equals(fireStation.getAddress())).toList()));
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load data from data.json",e);
+            throw new RuntimeException("Failed to load data from data.json", e);
         }
     }
 
+
     /**
-     * Saves the current state of the data to the classpath resource 'data.json'.
+     * Saves the data to the classpath resource 'data.json'.
      * <p>
      * The data is saved in the following order: persons, firestations, medicalrecords.
-     *
-     * @see #people()
-     * @see #fireStations()
-     * @see #medicalRecords()
+     * <p>
+     * This method is used by the application to persist the data when it is shut down.
      */
     public void saveData() {
         WritableResource dataFile = (WritableResource) resourceLoader.getResource("classpath:data.json");
@@ -72,15 +81,28 @@ public class JsonDatabase {
             // Crete a new root node to structure the data
             ObjectNode rootNode = objectMapper.createObjectNode();
 
-            // Set the data into the root node
-            rootNode.set("persons", objectMapper.convertValue(people, objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class)));
-            rootNode.set("firestations", objectMapper.convertValue(fireStations, objectMapper.getTypeFactory().constructCollectionType(List.class, FireStation.class)));
-            rootNode.set("medicalrecords", objectMapper.convertValue(medicalRecords, objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class)));
+            // Retrieve data
+            ArrayNode personsNode = objectMapper.valueToTree(people());
+            ArrayNode fireStationsNode = objectMapper.valueToTree(fireStations());
+            ArrayNode medicalRecordsNode = objectMapper.valueToTree(medicalRecords());
+
+            //Ensure correct data is saved
+            personsNode.forEach(person -> {
+                ((ObjectNode) person).remove("medicalRecord");
+            });
+            fireStationsNode.forEach(fireStation -> {
+                ((ObjectNode) fireStation).remove("persons");
+            });
+
+            // Add the data to the root node
+            rootNode.set("persons", personsNode);
+            rootNode.set("firestations", fireStationsNode);
+            rootNode.set("medicalrecords", medicalRecordsNode);
 
             // Write the data into the file
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(dataFile.getFile(), rootNode);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to save data to data.json",e);
+            throw new RuntimeException("Failed to save data to data.json", e);
         }
     }
 
