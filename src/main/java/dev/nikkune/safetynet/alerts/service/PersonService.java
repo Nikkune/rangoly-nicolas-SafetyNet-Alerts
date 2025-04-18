@@ -32,18 +32,18 @@ public class PersonService {
     /**
      * Gets a person by their first and last name.
      * <p>
-     * Finds a person in the database with the given first and last name, and if
-     * found, returns the person. If not found, throws a RuntimeException with the
-     * message "Person not found".
-     * @param firstName the first name of the person to get
-     * @param lastName the last name of the person to get
+     * Returns the person with the given first and last name.
+     * <p>
+     * If no person is found with the given name, a RuntimeException is thrown
+     * with the message "Person not found".
+     *
+     * @param firstName the first name of the person to retrieve
+     * @param lastName the last name of the person to retrieve
      * @return the person with the given first and last name
-     * @throws RuntimeException if the person is not found
+     * @throws RuntimeException if no person is found with the given name
      */
-    public Person getPerson(String firstName, String lastName) {
-        Person existingPerson = jsonDatabase.people().stream()
-                .filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))
-                .findFirst().orElse(null);
+    public Person getPerson(String firstName, String lastName) throws RuntimeException {
+        Person existingPerson = jsonDatabase.people().stream().filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)).findFirst().orElse(null);
         if (existingPerson != null) {
             return existingPerson;
         } else {
@@ -51,66 +51,45 @@ public class PersonService {
         }
     }
 
-
     /**
-     * Creates a new person in the database.
+     * Creates a new person with the given details.
      * <p>
-     * Constructs a new Person object with the provided details and adds it to the database
-     * if a person with the same first and last name does not already exist.
-     * If a person with the same first and last name exists, a RuntimeException is thrown.
+     * If a person with the same first and last name already exists, a RuntimeException is thrown
+     * with the message "Person already exists".
      * <p>
-     * @param firstName the first name of the person
-     * @param lastName the last name of the person
-     * @param address the address of the person
-     * @param city the city where the person resides
-     * @param zip the zip code of the person's address
-     * @param phone the phone number of the person
-     * @param email the email address of the person
-     * @return the created Person object
-     * @throws RuntimeException if a person with the same first and last name already exists
+     * Otherwise, the person is added to the database and the database is saved.
+     *
+     * @param person the person to create
+     * @throws RuntimeException if a person with the same name already exists
      */
-    public Person create(String firstName, String lastName, String address, String city, String zip, String phone, String email) {
-        Person person = new Person();
-        person.setFirstName(firstName);
-        person.setLastName(lastName);
-        person.setAddress(address);
-        person.setCity(city);
-        person.setZip(zip);
-        person.setPhone(phone);
-        person.setEmail(email);
-        Person existingPerson = getPerson(firstName, lastName);
+    public void create(Person person) throws RuntimeException {
+        Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName())).findFirst().orElse(null);
         if (existingPerson == null) {
             jsonDatabase.people().add(person);
             jsonDatabase.saveData();
-            return person;
         } else {
             throw new RuntimeException("Person already exists");
         }
     }
 
     /**
-     * Updates a person in the database.
+     * Updates an existing person in the database.
      * <p>
-     * Finds the person by their first and last name, updates the person's information
-     * with the provided information, and persists the updated person to the database.
+     * Finds the person by their first and last name, removes the existing entry,
+     * and adds the updated person details. Persists the changes to the database.
      * <p>
-     * If the person is not found, a RuntimeException is thrown with the message "Person not found".
-     * @param person the person to update
-     * @return the updated person
-     * @throws RuntimeException if the person is not found
+     * If no person is found with the given first and last name, a RuntimeException is thrown
+     * with the message "Person not found".
+     *
+     * @param person the person with updated details
+     * @throws RuntimeException if no person is found with the given first and last name
      */
-    public Person update(Person person) {
-        Person existingPerson = getPerson(person.getFirstName(), person.getLastName());
+    public void update(Person person) throws RuntimeException {
+        Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName())).findFirst().orElse(null);
         if (existingPerson != null) {
-            existingPerson.setAddress(person.getAddress());
-            existingPerson.setCity(person.getCity());
-            existingPerson.setEmail(person.getEmail());
-            existingPerson.setFirstName(person.getFirstName());
-            existingPerson.setLastName(person.getLastName());
-            existingPerson.setZip(person.getZip());
-            existingPerson.setPhone(person.getPhone());
+            jsonDatabase.people().remove(existingPerson);
+            jsonDatabase.people().add(person);
             jsonDatabase.saveData();
-            return existingPerson;
         } else {
             throw new RuntimeException("Person not found");
         }
@@ -119,18 +98,19 @@ public class PersonService {
     /**
      * Deletes a person from the database.
      * <p>
-     * Finds the person by their first and last name, removes them from the list of people,
-     * and persists the updated list to the database.
+     * Finds the person by their first and last name, removes the existing entry,
+     * and persists the changes to the database.
      * <p>
-     * If the person is not found, a RuntimeException is thrown with the message "Person not found".
-     * @param firstName the first name of the person to delete
-     * @param lastName the last name of the person to delete
-     * @throws RuntimeException if the person is not found
+     * If no person is found with the given first and last name, a RuntimeException is thrown
+     * with the message "Person not found".
+     *
+     * @param person the person to delete
+     * @throws RuntimeException if no person is found with the given first and last name
      */
-    public void delete(String firstName, String lastName) {
-        Person person = getPerson(firstName, lastName);
-        if (person != null) {
-            jsonDatabase.people().remove(person);
+    public void delete(Person person) throws RuntimeException {
+        Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName())).findFirst().orElse(null);
+        if (existingPerson != null) {
+            jsonDatabase.people().remove(existingPerson);
             jsonDatabase.saveData();
         } else {
             throw new RuntimeException("Person not found");
