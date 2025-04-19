@@ -42,13 +42,25 @@ public class PersonService {
      * @return the person with the given first and last name
      * @throws RuntimeException if no person is found with the given name
      */
-    public Person getPerson(String firstName, String lastName) throws RuntimeException {
+    public Person get(String firstName, String lastName) throws RuntimeException {
         Person existingPerson = jsonDatabase.people().stream().filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)).findFirst().orElse(null);
         if (existingPerson != null) {
             return existingPerson;
         } else {
             throw new RuntimeException("Person not found");
         }
+    }
+
+    /**
+     * Gets all the people from the database with the given address.
+     * <p>
+     * Returns a list of all people stored in the database with the given address.
+     *
+     * @param address the address of the people to retrieve
+     * @return a list of all people with the given address
+     */
+    public List<Person> getByAddress(String address) {
+        return jsonDatabase.people().stream().filter(person -> person.getAddress().equals(address)).toList();
     }
 
     /**
@@ -95,20 +107,22 @@ public class PersonService {
         }
     }
 
+
     /**
      * Deletes a person from the database.
      * <p>
-     * Finds the person by their first and last name, removes the existing entry,
-     * and persists the changes to the database.
+     * Finds the person by the given first and last name and removes it from the database.
+     * Persists the changes to the database.
      * <p>
      * If no person is found with the given first and last name, a RuntimeException is thrown
      * with the message "Person not found".
      *
-     * @param person the person to delete
+     * @param firstName the first name of the person to delete
+     * @param lastName the last name of the person to delete
      * @throws RuntimeException if no person is found with the given first and last name
      */
-    public void delete(Person person) throws RuntimeException {
-        Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName())).findFirst().orElse(null);
+    public void delete(String firstName, String lastName) throws RuntimeException {
+        Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)).findFirst().orElse(null);
         if (existingPerson != null) {
             jsonDatabase.people().remove(existingPerson);
             jsonDatabase.saveData();

@@ -115,11 +115,12 @@ public class MedicalRecordService {
      * If no medical record is found with the given first and last name, a RuntimeException is thrown
      * with the message "Medical record not found".
      *
-     * @param medicalRecord the medical record to delete
+     * @param firstName the first name of the person to delete
+     * @param lastName the last name of the person to delete
      * @throws RuntimeException if no medical record is found with the given first and last name
      */
-    public void delete(MedicalRecord medicalRecord) throws RuntimeException {
-        MedicalRecord existingRecord = jsonDatabase.medicalRecords().stream().filter(record -> record.getFirstName().equals(medicalRecord.getFirstName()) && record.getLastName().equals(medicalRecord.getLastName())).findFirst().orElse(null);
+    public void delete(String firstName, String lastName) throws RuntimeException {
+        MedicalRecord existingRecord = jsonDatabase.medicalRecords().stream().filter(record -> record.getFirstName().equals(firstName) && record.getLastName().equals(lastName)).findFirst().orElse(null);
         if (existingRecord != null) {
             jsonDatabase.medicalRecords().remove(existingRecord);
             jsonDatabase.saveData();

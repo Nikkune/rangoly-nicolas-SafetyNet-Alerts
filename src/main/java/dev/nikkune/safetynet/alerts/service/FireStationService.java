@@ -110,8 +110,29 @@ public class FireStationService {
      * @param address the address of the fire station to delete
      * @throws RuntimeException if no fire station is found with the given address
      */
-    public void delete(String address) throws RuntimeException {
+    public void deleteByAddress(String address) throws RuntimeException {
         FireStation existingFireStation = jsonDatabase.fireStations().stream().filter(f -> f.getAddress().equals(address)).findFirst().orElse(null);
+        if (existingFireStation != null) {
+            jsonDatabase.fireStations().remove(existingFireStation);
+            jsonDatabase.saveData();
+        } else {
+            throw new RuntimeException("Fire station not found");
+        }
+    }
+
+    /**
+     * Deletes a fire station by its station number.
+     * <p>
+     * Finds the fire station with the given station number, removes it from the collection of fire stations in the database,
+     * and persists the changes to the database.
+     * <p>
+     * If no fire station is found with the given station number, a RuntimeException is thrown with the message "Fire station not found".
+     *
+     * @param station the station number of the fire station to delete
+     * @throws RuntimeException if no fire station is found with the given station number
+     */
+    public void deleteByStation(String station) throws RuntimeException {
+        FireStation existingFireStation = jsonDatabase.fireStations().stream().filter(f -> f.getStation().equals(station)).findFirst().orElse(null);
         if (existingFireStation != null) {
             jsonDatabase.fireStations().remove(existingFireStation);
             jsonDatabase.saveData();
