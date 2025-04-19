@@ -88,7 +88,7 @@ public class FireStationService {
      * @param fireStation the fire station with updated details
      * @throws RuntimeException if no fire station is found with the given address
      */
-    private void update(FireStation fireStation) throws RuntimeException {
+    public void update(FireStation fireStation) throws RuntimeException {
         FireStation existingFireStation = jsonDatabase.fireStations().stream().filter(f -> f.getAddress().equals(fireStation.getAddress())).findFirst().orElse(null);
         if (existingFireStation != null) {
             jsonDatabase.fireStations().remove(existingFireStation);
