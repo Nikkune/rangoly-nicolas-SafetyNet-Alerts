@@ -8,11 +8,10 @@ import dev.nikkune.safetynet.alerts.model.FireStation;
 import dev.nikkune.safetynet.alerts.model.MedicalRecord;
 import dev.nikkune.safetynet.alerts.model.Person;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.WritableResource;
 
 import java.util.List;
 
@@ -28,13 +27,13 @@ import java.util.List;
 @Configuration
 public class JsonDatabase {
 
-    private final ResourceLoader resourceLoader;
     private List<Person> people;
     private List<FireStation> fireStations;
     private List<MedicalRecord> medicalRecords;
+    @Value("${json.data.url}")
+    private Resource resource;
 
-    public JsonDatabase(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+    public JsonDatabase() {
     }
 
     /**
@@ -48,10 +47,9 @@ public class JsonDatabase {
      */
     @PostConstruct
     public void loadData() {
-        Resource dataFile = resourceLoader.getResource("data.json");
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            JsonNode rootNode = objectMapper.readTree(dataFile.getInputStream());
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(resource.getInputStream());
             people = objectMapper.convertValue(rootNode.get("persons"), objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
             fireStations = objectMapper.convertValue(rootNode.get("firestations"), objectMapper.getTypeFactory().constructCollectionType(List.class, FireStation.class));
             medicalRecords = objectMapper.convertValue(rootNode.get("medicalrecords"), objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class));
@@ -75,9 +73,10 @@ public class JsonDatabase {
      * This method is used by the application to persist the data when it is shut down.
      */
     public void saveData() {
-        WritableResource dataFile = (WritableResource) resourceLoader.getResource("classpath:data.json");
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
+            // Create a new ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
+
             // Crete a new root node to structure the data
             ObjectNode rootNode = objectMapper.createObjectNode();
 
@@ -100,7 +99,7 @@ public class JsonDatabase {
             rootNode.set("medicalrecords", medicalRecordsNode);
 
             // Write the data into the file
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(dataFile.getFile(), rootNode);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(resource.getFile(), rootNode);
         } catch (Exception e) {
             throw new RuntimeException("Failed to save data to data.json", e);
         }
