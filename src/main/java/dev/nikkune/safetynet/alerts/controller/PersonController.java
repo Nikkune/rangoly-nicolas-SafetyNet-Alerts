@@ -4,6 +4,7 @@ import dev.nikkune.safetynet.alerts.dto.PersonDTO;
 import dev.nikkune.safetynet.alerts.mapper.PersonMapper;
 import dev.nikkune.safetynet.alerts.model.Person;
 import dev.nikkune.safetynet.alerts.service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,8 +53,8 @@ public class PersonController {
      * @return the person with the given first and last name
      * @throws RuntimeException if no person is found with the given first and last name
      */
-    @GetMapping("/{firstName}/{lastName}")
-    public ResponseEntity<PersonDTO> getPersonByFirstNameAndLastName(@PathVariable String firstName, @PathVariable String lastName) {
+    @GetMapping("/")
+    public ResponseEntity<PersonDTO> getPersonByFirstNameAndLastName(@RequestParam String firstName, @RequestParam String lastName) {
         try {
             Person person = service.get(firstName, lastName);
             PersonDTO personDTO = mapper.toDTO(person);
@@ -76,8 +77,8 @@ public class PersonController {
      * @return a list of people that match the given address
      * @throws RuntimeException if no person is found with the given address
      */
-    @GetMapping("/address/{address}")
-    public ResponseEntity<List<PersonDTO>> getPersonsByAddress(@PathVariable String address) {
+    @GetMapping("/address")
+    public ResponseEntity<List<PersonDTO>> getPersonsByAddress(@RequestParam String address) {
         List<Person> persons = service.getByAddress(address);
         List<PersonDTO> personsDTO = persons.stream().map(mapper::toDTO).toList();
         return ResponseEntity.ok(personsDTO);
@@ -93,7 +94,7 @@ public class PersonController {
      * @param personDTO the data transfer object containing the person's information
      */
     @PostMapping
-    public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonDTO personDTO) {
         Person person = mapper.toEntity(personDTO);
         try {
             service.create(person);
@@ -112,7 +113,7 @@ public class PersonController {
      * @param personDTO the data transfer object containing the person's updated information
      */
     @PutMapping
-    public ResponseEntity<PersonDTO> updatePerson(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonDTO> updatePerson(@Valid @RequestBody PersonDTO personDTO) {
         Person person = mapper.toEntity(personDTO);
         try {
             service.update(person);
@@ -131,8 +132,8 @@ public class PersonController {
      * @param firstName the first name of the person to delete
      * @param lastName the last name of the person to delete
      */
-    @DeleteMapping("/{firstName}/{lastName}")
-    public ResponseEntity<Void> deletePerson(@PathVariable String firstName, @PathVariable String lastName) {
+    @DeleteMapping
+    public ResponseEntity<Void> deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
         try {
             service.delete(firstName, lastName);
             return ResponseEntity.noContent().build();
@@ -140,4 +141,6 @@ public class PersonController {
             throw new RuntimeException("Person not found");
         }
     }
+
+    // TODO Exceptions Handling
 }
