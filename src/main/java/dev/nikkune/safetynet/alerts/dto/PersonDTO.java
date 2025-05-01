@@ -1,5 +1,6 @@
 package dev.nikkune.safetynet.alerts.dto;
 
+import dev.nikkune.safetynet.alerts.validation.Phone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,7 +26,7 @@ public class PersonDTO {
     @Size(min = 5, max = 5, message = "Zip code must be 5 digits long")
     private String zip;
     @NotBlank(message = "Phone number is required")
-//    @Phone
+    @Phone
     private String phone;
     @NotBlank(message = "Email is required")
     @Email
