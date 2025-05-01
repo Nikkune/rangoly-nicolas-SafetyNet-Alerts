@@ -6,6 +6,8 @@ import dev.nikkune.safetynet.alerts.model.FireStation;
 import dev.nikkune.safetynet.alerts.service.FireStationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class FireStationController {
     private final FireStationService service;
     private final FireStationMapper mapper;
 
+    private static final Logger logger = LogManager.getLogger(FireStationController.class);
+
     public FireStationController(FireStationService service, FireStationMapper mapper) {
         this.service = service;
         this.mapper = mapper;
@@ -38,8 +42,10 @@ public class FireStationController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<FireStationDTO>> getAllFireStations() {
+        logger.debug("Received request for all fire stations");
         List<FireStation> fireStations = service.getAll();
         List<FireStationDTO> fireStationsDTO = fireStations.stream().map(mapper::toDTO).toList();
+        logger.info("Retrieved {} fire stations", fireStations.size());
         return ResponseEntity.ok(fireStationsDTO);
     }
 
@@ -56,8 +62,10 @@ public class FireStationController {
      */
     @GetMapping
     public ResponseEntity<List<FireStationDTO>> getFireStationByStationNumber(@RequestParam @NotBlank(message = "Station Number is required") String number) {
+        logger.debug("Received request for fire station by station number : {}", number);
         List<FireStation> fireStations = service.get(number);
         List<FireStationDTO> fireStationDTOS = fireStations.stream().map(mapper::toDTO).toList();
+        logger.info("Retrieved {} fire stations by station number", fireStations.size());
         return ResponseEntity.ok(fireStationDTOS);
     }
 
@@ -74,8 +82,10 @@ public class FireStationController {
      */
     @GetMapping("/address")
     public ResponseEntity<FireStationDTO> getFireStationByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
+        logger.debug("Received request for fire station by address : {}", address);
         FireStation fireStation = service.getByAddress(address);
         FireStationDTO fireStationDTO = mapper.toDTO(fireStation);
+        logger.info("Retrieved fire station by address");
         return ResponseEntity.ok(fireStationDTO);
     }
 
@@ -94,8 +104,10 @@ public class FireStationController {
      */
     @PostMapping
     public ResponseEntity<FireStationDTO> createFireStation(@Valid @RequestBody FireStationDTO fireStationDTO) {
+        logger.debug("Received request to create fire station");
         FireStation entity = mapper.toEntity(fireStationDTO);
         service.create(entity);
+        logger.info("Created fire station");
         return ResponseEntity.ok(fireStationDTO);
     }
 
@@ -114,8 +126,10 @@ public class FireStationController {
      */
     @PutMapping
     public ResponseEntity<FireStationDTO> updateFireStation(@Valid @RequestBody FireStationDTO fireStationDTO) {
+        logger.debug("Received request to update fire station");
         FireStation entity = mapper.toEntity(fireStationDTO);
         service.update(entity);
+        logger.info("Updated fire station");
         return ResponseEntity.ok(fireStationDTO);
     }
 
@@ -134,7 +148,9 @@ public class FireStationController {
      */
     @DeleteMapping
     public ResponseEntity<Void> deleteFireStationByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
+        logger.debug("Received request to delete fire station by address : {}", address);
         service.deleteByAddress(address);
+        logger.info("Deleted fire station by address");
         return ResponseEntity.noContent().build();
     }
 
@@ -153,7 +169,9 @@ public class FireStationController {
      */
     @DeleteMapping("/station")
     public ResponseEntity<Void> deleteFireStation(@RequestParam @NotBlank(message = "Station Number is required") String number) {
+        logger.debug("Received request to delete fire station by station number : {}", number);
         service.deleteByStation(number);
+        logger.info("Deleted fire station by station number");
         return ResponseEntity.noContent().build();
     }
 }

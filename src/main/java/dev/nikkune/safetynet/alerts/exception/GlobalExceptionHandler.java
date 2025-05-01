@@ -1,6 +1,8 @@
 package dev.nikkune.safetynet.alerts.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,6 +16,8 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
+
     /**
      * Handles RuntimeExceptions that are thrown by the controllers.
      * <p>
@@ -26,6 +30,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
+        logger.error(e.getMessage());
         if (e.getMessage() != null && e.getMessage().toLowerCase().contains("not found")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } else if (e.getMessage() != null && e.getMessage().toLowerCase().contains("already exists")) {
@@ -55,6 +60,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        logger.error(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
@@ -66,6 +72,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getMessage();
             errors.put(fieldName, errorMessage);
         });
+        logger.error(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
@@ -78,6 +85,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception e) {
+        logger.error("Internal server error: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error: " + e.getMessage());
     }
 }

@@ -6,6 +6,8 @@ import dev.nikkune.safetynet.alerts.model.Person;
 import dev.nikkune.safetynet.alerts.service.PersonService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class PersonController {
     private final PersonService service;
     private final PersonMapper mapper;
 
+    private static final Logger logger = LogManager.getLogger(PersonController.class);
+
     public PersonController(PersonService service, PersonMapper mapper) {
         this.service = service;
         this.mapper = mapper;
@@ -38,8 +42,10 @@ public class PersonController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<PersonDTO>> getAllPersons() {
+        logger.debug("Received request to get all persons");
         List<Person> persons = service.getAll();
         List<PersonDTO> personsDTO = persons.stream().map(mapper::toDTO).toList();
+        logger.info("Returning {} persons", persons.size());
         return ResponseEntity.ok(personsDTO);
     }
 
@@ -59,8 +65,10 @@ public class PersonController {
      */
     @GetMapping
     public ResponseEntity<PersonDTO> getPersonByFirstNameAndLastName(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        logger.debug("Received request to get person with first name {} and last name {}", firstName, lastName);
         Person person = service.get(firstName, lastName);
         PersonDTO personDTO = mapper.toDTO(person);
+        logger.info("Returning person with first name {} and last name {}", firstName, lastName);
         return ResponseEntity.ok(personDTO);
     }
 
@@ -79,8 +87,10 @@ public class PersonController {
      */
     @GetMapping("/address")
     public ResponseEntity<List<PersonDTO>> getPersonsByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
+        logger.debug("Received request to get persons with address {}", address);
         List<Person> persons = service.getByAddress(address);
         List<PersonDTO> personsDTO = persons.stream().map(mapper::toDTO).toList();
+        logger.info("Returning {} persons with address {}", persons.size(), address);
         return ResponseEntity.ok(personsDTO);
     }
 
@@ -95,8 +105,10 @@ public class PersonController {
      */
     @PostMapping
     public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonDTO personDTO) {
+        logger.debug("Received request to create person");
         Person person = mapper.toEntity(personDTO);
         service.create(person);
+        logger.info("Created person");
         return ResponseEntity.ok(personDTO);
     }
 
@@ -110,8 +122,10 @@ public class PersonController {
      */
     @PutMapping
     public ResponseEntity<PersonDTO> updatePerson(@Valid @RequestBody PersonDTO personDTO) {
+        logger.debug("Received request to update person");
         Person person = mapper.toEntity(personDTO);
         service.update(person);
+        logger.info("Updated person");
         return ResponseEntity.ok(personDTO);
     }
 
@@ -126,7 +140,9 @@ public class PersonController {
      */
     @DeleteMapping
     public ResponseEntity<Void> deletePerson(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        logger.debug("Received request to delete person with first name {} and last name {}", firstName, lastName);
         service.delete(firstName, lastName);
+        logger.info("Deleted person with first name {} and last name {}", firstName, lastName);
         return ResponseEntity.noContent().build();
     }
 }

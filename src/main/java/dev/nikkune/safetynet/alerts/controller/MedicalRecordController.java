@@ -6,6 +6,8 @@ import dev.nikkune.safetynet.alerts.model.MedicalRecord;
 import dev.nikkune.safetynet.alerts.service.MedicalRecordService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,8 @@ public class MedicalRecordController {
     private final MedicalRecordService service;
     private final MedicalRecordMapper mapper;
 
+    private static final Logger logger = LogManager.getLogger(MedicalRecordController.class);
+
     public MedicalRecordController(MedicalRecordService service, MedicalRecordMapper mapper) {
         this.mapper = mapper;
         this.service = service;
@@ -39,8 +43,10 @@ public class MedicalRecordController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<MedicalRecordDTO>> getAllMedicalRecords() {
+        logger.debug("Received request to get all medical records");
         List<MedicalRecord> medicalRecords = service.getAll();
         List<MedicalRecordDTO> medicalRecordDTOS = medicalRecords.stream().map(mapper::toDTO).toList();
+        logger.info("Returning {} medical records", medicalRecordDTOS.size());
         return ResponseEntity.ok(medicalRecordDTOS);
     }
 
@@ -58,8 +64,10 @@ public class MedicalRecordController {
      */
     @GetMapping
     public ResponseEntity<MedicalRecordDTO> getMedicalRecordByFirstNameAndLastName(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        logger.debug("Received request to get medical record with first name {} and last name {}", firstName, lastName);
         MedicalRecord medicalRecord = service.get(firstName, lastName);
         MedicalRecordDTO medicalRecordDTO = mapper.toDTO(medicalRecord);
+        logger.info("Returning medical record with first name {} and last name {}", firstName, lastName);
         return ResponseEntity.ok(medicalRecordDTO);
     }
 
@@ -82,8 +90,10 @@ public class MedicalRecordController {
      */
     @PostMapping
     public ResponseEntity<MedicalRecordDTO> createMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord) {
+        logger.debug("Received request to create medical record");
         service.create(medicalRecord);
         MedicalRecordDTO medicalRecordDTO = mapper.toDTO(medicalRecord);
+        logger.info("Created medical record");
         return ResponseEntity.ok(medicalRecordDTO);
     }
 
@@ -103,8 +113,10 @@ public class MedicalRecordController {
      */
     @PutMapping
     public ResponseEntity<MedicalRecordDTO> updateMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord) {
+        logger.debug("Received request to update medical record");
         service.update(medicalRecord);
         MedicalRecordDTO medicalRecordDTO = mapper.toDTO(medicalRecord);
+        logger.info("Updated medical record");
         return ResponseEntity.ok(medicalRecordDTO);
     }
 
@@ -123,7 +135,9 @@ public class MedicalRecordController {
      */
     @DeleteMapping
     public ResponseEntity<Void> deleteMedicalRecord(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        logger.debug("Received request to delete medical record with first name {} and last name {}", firstName, lastName);
         service.delete(firstName, lastName);
+        logger.info("Deleted medical record with first name {} and last name {}", firstName, lastName);
         return ResponseEntity.noContent().build();
     }
 }
