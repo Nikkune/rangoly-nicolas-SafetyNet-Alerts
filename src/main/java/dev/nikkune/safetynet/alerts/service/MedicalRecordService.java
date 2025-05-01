@@ -70,7 +70,7 @@ public class MedicalRecordService {
     public void create(MedicalRecord medicalRecord) throws RuntimeException {
         Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(medicalRecord.getFirstName()) && p.getLastName().equals(medicalRecord.getLastName())).findFirst().orElse(null);
         if (existingPerson == null) {
-            throw new RuntimeException("There is no person with this name");
+            throw new RuntimeException("Person not found");
         } else {
             MedicalRecord existingRecord = jsonDatabase.medicalRecords().stream().filter(record -> record.getFirstName().equals(medicalRecord.getFirstName()) && record.getLastName().equals(medicalRecord.getLastName())).findFirst().orElse(null);
             if (existingRecord == null) {
@@ -86,20 +86,22 @@ public class MedicalRecordService {
     /**
      * Updates an existing medical record in the database.
      * <p>
-     * Finds the medical record by the person's first and last name, removes the existing entry,
-     * and adds the updated medical record details. Persists the changes to the database.
+     * The medical record to update is given in the parameter.
      * <p>
      * If no medical record is found with the given first and last name, a RuntimeException is thrown
      * with the message "Medical record not found".
+     * <p>
+     * Otherwise, the medical record is updated in the database and the database is saved.
      *
-     * @param medicalRecord the medical record with updated details
+     * @param medicalRecord the medical record to update
      * @throws RuntimeException if no medical record is found with the given first and last name
      */
     public void update(MedicalRecord medicalRecord) throws RuntimeException {
         MedicalRecord existingRecord = jsonDatabase.medicalRecords().stream().filter(record -> record.getFirstName().equals(medicalRecord.getFirstName()) && record.getLastName().equals(medicalRecord.getLastName())).findFirst().orElse(null);
         if (existingRecord != null) {
-            jsonDatabase.medicalRecords().remove(existingRecord);
-            jsonDatabase.medicalRecords().add(medicalRecord);
+            existingRecord.setBirthdate(medicalRecord.getBirthdate());
+            existingRecord.setMedications(medicalRecord.getMedications());
+            existingRecord.setAllergies(medicalRecord.getAllergies());
             jsonDatabase.saveData();
         } else {
             throw new RuntimeException("Medical record not found");

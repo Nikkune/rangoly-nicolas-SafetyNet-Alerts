@@ -85,22 +85,24 @@ public class PersonService {
     }
 
     /**
-     * Updates an existing person in the database.
+     * Updates a person in the database.
      * <p>
-     * Finds the person by their first and last name, removes the existing entry,
-     * and adds the updated person details. Persists the changes to the database.
+     * Finds the person by their first and last name and updates them with the given information.
+     * If the person is not found, a RuntimeException is thrown with the message "Person not found".
      * <p>
-     * If no person is found with the given first and last name, a RuntimeException is thrown
-     * with the message "Person not found".
+     * Otherwise, the person is updated and the database is saved.
      *
-     * @param person the person with updated details
-     * @throws RuntimeException if no person is found with the given first and last name
+     * @param person the person to update
+     * @throws RuntimeException if the person is not found
      */
     public void update(Person person) throws RuntimeException {
         Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName())).findFirst().orElse(null);
         if (existingPerson != null) {
-            jsonDatabase.people().remove(existingPerson);
-            jsonDatabase.people().add(person);
+            existingPerson.setAddress(person.getAddress());
+            existingPerson.setCity(person.getCity());
+            existingPerson.setZip(person.getZip());
+            existingPerson.setPhone(person.getPhone());
+            existingPerson.setEmail(person.getEmail());
             jsonDatabase.saveData();
         } else {
             throw new RuntimeException("Person not found");

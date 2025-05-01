@@ -100,8 +100,8 @@ public class FireStationService {
     /**
      * Updates an existing fire station in the database.
      * <p>
-     * Finds the fire station by its address, removes the existing entry,
-     * and adds the updated fire station details. Persists the changes to the database.
+     * Finds the fire station by its address, updates its details including station number,
+     * address, and associated persons, and persists the changes to the database.
      * <p>
      * If no fire station is found with the given address, a RuntimeException is thrown
      * with the message "Fire station not found".
@@ -112,9 +112,8 @@ public class FireStationService {
     public void update(FireStation fireStation) throws RuntimeException {
         FireStation existingFireStation = jsonDatabase.fireStations().stream().filter(f -> f.getAddress().equals(fireStation.getAddress())).findFirst().orElse(null);
         if (existingFireStation != null) {
-            jsonDatabase.fireStations().remove(existingFireStation);
-            fireStation.setPersons(jsonDatabase.people().stream().filter(p -> p.getAddress().equals(fireStation.getAddress())).toList());
-            jsonDatabase.fireStations().add(fireStation);
+            existingFireStation.setStation(fireStation.getStation());
+            existingFireStation.setPersons(jsonDatabase.people().stream().filter(p -> p.getAddress().equals(fireStation.getAddress())).toList());
             jsonDatabase.saveData();
         } else {
             throw new RuntimeException("Fire station not found");
