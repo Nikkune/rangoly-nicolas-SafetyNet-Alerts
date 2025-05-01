@@ -1,8 +1,13 @@
 package dev.nikkune.safetynet.alerts.controller;
 
+import dev.nikkune.safetynet.alerts.dto.MedicalRecordDTO;
+import dev.nikkune.safetynet.alerts.mapper.MedicalRecordMapper;
 import dev.nikkune.safetynet.alerts.model.MedicalRecord;
 import dev.nikkune.safetynet.alerts.service.MedicalRecordService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +20,13 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/medicalrecord")
+@Validated
 public class MedicalRecordController {
     private final MedicalRecordService service;
+    private final MedicalRecordMapper mapper;
 
-    public MedicalRecordController(MedicalRecordService service) {
+    public MedicalRecordController(MedicalRecordService service, MedicalRecordMapper mapper) {
+        this.mapper = mapper;
         this.service = service;
     }
 
@@ -29,10 +37,11 @@ public class MedicalRecordController {
      *
      * @return a list of all medical records
      */
-    @GetMapping
-    public ResponseEntity<List<MedicalRecord>> getAllMedicalRecords() {
+    @GetMapping("/all")
+    public ResponseEntity<List<MedicalRecordDTO>> getAllMedicalRecords() {
         List<MedicalRecord> medicalRecords = service.getAll();
-        return ResponseEntity.ok(medicalRecords);
+        List<MedicalRecordDTO> medicalRecordDTOS = medicalRecords.stream().map(mapper::toDTO).toList();
+        return ResponseEntity.ok(medicalRecordDTOS);
     }
 
     /**
@@ -43,18 +52,15 @@ public class MedicalRecordController {
      * If no medical record is found, a RuntimeException is thrown with the message "Medical record not found".
      *
      * @param firstName the first name of the person whose medical record is to be retrieved
-     * @param lastName the last name of the person whose medical record is to be retrieved
+     * @param lastName  the last name of the person whose medical record is to be retrieved
      * @return a ResponseEntity containing the medical record if found, otherwise throws a RuntimeException
      * @throws RuntimeException if no medical record is found with the given first and last name
      */
-    @GetMapping("/{firstName}/{lastName}")
-    public ResponseEntity<MedicalRecord> getMedicalRecordByFirstNameAndLastName(@PathVariable String firstName, @PathVariable String lastName) {
-        try {
-            MedicalRecord medicalRecord = service.get(firstName, lastName);
-            return ResponseEntity.ok(medicalRecord);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Medical record not found");
-        }
+    @GetMapping
+    public ResponseEntity<MedicalRecordDTO> getMedicalRecordByFirstNameAndLastName(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        MedicalRecord medicalRecord = service.get(firstName, lastName);
+        MedicalRecordDTO medicalRecordDTO = mapper.toDTO(medicalRecord);
+        return ResponseEntity.ok(medicalRecordDTO);
     }
 
     /**
@@ -75,13 +81,10 @@ public class MedicalRecordController {
      * @throws RuntimeException if no person exists with the given name or if the medical record already exists
      */
     @PostMapping
-    public ResponseEntity<MedicalRecord> createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        try {
-            service.create(medicalRecord);
-            return ResponseEntity.ok(medicalRecord);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Medical record already exists");
-        }
+    public ResponseEntity<MedicalRecordDTO> createMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord) {
+        service.create(medicalRecord);
+        MedicalRecordDTO medicalRecordDTO = mapper.toDTO(medicalRecord);
+        return ResponseEntity.ok(medicalRecordDTO);
     }
 
     /**
@@ -99,13 +102,10 @@ public class MedicalRecordController {
      * @throws RuntimeException if no medical record is found with the given first and last name
      */
     @PutMapping
-    public ResponseEntity<MedicalRecord> updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        try {
-            service.update(medicalRecord);
-            return ResponseEntity.ok(medicalRecord);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Medical record not found");
-        }
+    public ResponseEntity<MedicalRecordDTO> updateMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord) {
+        service.update(medicalRecord);
+        MedicalRecordDTO medicalRecordDTO = mapper.toDTO(medicalRecord);
+        return ResponseEntity.ok(medicalRecordDTO);
     }
 
     /**
@@ -117,17 +117,13 @@ public class MedicalRecordController {
      * with the message "Medical record not found".
      *
      * @param firstName the first name of the medical record to delete
-     * @param lastName the last name of the medical record to delete
+     * @param lastName  the last name of the medical record to delete
      * @return a ResponseEntity with no content and a 204 status if the medical record was found and deleted,
      * or a ResponseEntity with a RuntimeException if no medical record was found
      */
-    @DeleteMapping("/{firstName}/{lastName}")
-    public ResponseEntity<Void> deleteMedicalRecord(@PathVariable String firstName, @PathVariable String lastName) {
-        try {
-            service.delete(firstName, lastName);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Medical record not found");
-        }
+    @DeleteMapping
+    public ResponseEntity<Void> deleteMedicalRecord(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        service.delete(firstName, lastName);
+        return ResponseEntity.noContent().build();
     }
 }

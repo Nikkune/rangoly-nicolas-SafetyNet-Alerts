@@ -4,7 +4,10 @@ import dev.nikkune.safetynet.alerts.dto.FireStationDTO;
 import dev.nikkune.safetynet.alerts.mapper.FireStationMapper;
 import dev.nikkune.safetynet.alerts.model.FireStation;
 import dev.nikkune.safetynet.alerts.service.FireStationService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/firestation")
+@Validated
 public class FireStationController {
     private final FireStationService service;
     private final FireStationMapper mapper;
@@ -32,10 +36,10 @@ public class FireStationController {
      *
      * @return a ResponseEntity containing a list of all fire station details
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<FireStationDTO>> getAllFireStations() {
         List<FireStation> fireStations = service.getAll();
-        List<FireStationDTO> fireStationsDTO = fireStations.stream().map(fireStation -> mapper.toDTO(fireStation)).toList();
+        List<FireStationDTO> fireStationsDTO = fireStations.stream().map(mapper::toDTO).toList();
         return ResponseEntity.ok(fireStationsDTO);
     }
 
@@ -50,15 +54,11 @@ public class FireStationController {
      * @return the associated fire station details
      * @throws RuntimeException if the fire station is not found
      */
-    @GetMapping("/{number}")
-    public ResponseEntity<List<FireStationDTO>> getFireStationByStationNumber(@PathVariable String number) {
-        try {
-            List<FireStation> fireStations = service.get(number);
-            List<FireStationDTO> fireStationDTOS = fireStations.stream().map(fireStation -> mapper.toDTO(fireStation)).toList();
-            return ResponseEntity.ok(fireStationDTOS);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Fire station not found");
-        }
+    @GetMapping
+    public ResponseEntity<List<FireStationDTO>> getFireStationByStationNumber(@RequestParam @NotBlank(message = "Station Number is required") String number) {
+        List<FireStation> fireStations = service.get(number);
+        List<FireStationDTO> fireStationDTOS = fireStations.stream().map(mapper::toDTO).toList();
+        return ResponseEntity.ok(fireStationDTOS);
     }
 
     /**
@@ -72,15 +72,11 @@ public class FireStationController {
      * @return a ResponseEntity containing the fire station details
      * @throws RuntimeException if the fire station is not found
      */
-    @GetMapping("/address/{address}")
-    public ResponseEntity<FireStationDTO> getFireStationByAddress(@PathVariable String address) {
-        try {
-            FireStation fireStation = service.getByAddress(address);
-            FireStationDTO fireStationDTO = mapper.toDTO(fireStation);
-            return ResponseEntity.ok(fireStationDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Fire station not found");
-        }
+    @GetMapping("/address")
+    public ResponseEntity<FireStationDTO> getFireStationByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
+        FireStation fireStation = service.getByAddress(address);
+        FireStationDTO fireStationDTO = mapper.toDTO(fireStation);
+        return ResponseEntity.ok(fireStationDTO);
     }
 
     /**
@@ -97,14 +93,10 @@ public class FireStationController {
      * @throws RuntimeException if a fire station with the same address already exists
      */
     @PostMapping
-    public ResponseEntity<FireStationDTO> createFireStation(@RequestBody FireStationDTO fireStationDTO) {
+    public ResponseEntity<FireStationDTO> createFireStation(@Valid @RequestBody FireStationDTO fireStationDTO) {
         FireStation entity = mapper.toEntity(fireStationDTO);
-        try {
-            service.create(entity);
-            return ResponseEntity.ok(fireStationDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Fire station already exists");
-        }
+        service.create(entity);
+        return ResponseEntity.ok(fireStationDTO);
     }
 
     /**
@@ -121,14 +113,10 @@ public class FireStationController {
      * @throws RuntimeException if the fire station is not found
      */
     @PutMapping
-    public ResponseEntity<FireStationDTO> updateFireStation(@RequestBody FireStationDTO fireStationDTO) {
+    public ResponseEntity<FireStationDTO> updateFireStation(@Valid @RequestBody FireStationDTO fireStationDTO) {
         FireStation entity = mapper.toEntity(fireStationDTO);
-        try {
-            service.update(entity);
-            return ResponseEntity.ok(fireStationDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Fire station not found");
-        }
+        service.update(entity);
+        return ResponseEntity.ok(fireStationDTO);
     }
 
     /**
@@ -144,14 +132,10 @@ public class FireStationController {
      * @return a ResponseEntity with an empty body
      * @throws RuntimeException if the fire station is not found
      */
-    @DeleteMapping("/address/{address}")
-    public ResponseEntity<Void> deleteFireStationByAddress(@PathVariable String address) {
-        try {
-            service.deleteByAddress(address);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Fire station not found");
-        }
+    @DeleteMapping
+    public ResponseEntity<Void> deleteFireStationByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
+        service.deleteByAddress(address);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -163,17 +147,13 @@ public class FireStationController {
      * <p>
      * The response is an HTTP 204 (No Content) status.
      *
-     * @param station the station number of the fire station to delete
+     * @param number the station number of the fire station to delete
      * @return a ResponseEntity with an empty body
      * @throws RuntimeException if the fire station is not found
      */
-    @DeleteMapping("/station/{station}")
-    public ResponseEntity<Void> deleteFireStation(@PathVariable String station) {
-        try {
-            service.deleteByStation(station);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Fire station not found");
-        }
+    @DeleteMapping("/station")
+    public ResponseEntity<Void> deleteFireStation(@RequestParam @NotBlank(message = "Station Number is required") String number) {
+        service.deleteByStation(number);
+        return ResponseEntity.noContent().build();
     }
 }

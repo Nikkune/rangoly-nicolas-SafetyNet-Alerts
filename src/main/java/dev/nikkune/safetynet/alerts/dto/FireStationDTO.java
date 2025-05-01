@@ -1,5 +1,6 @@
 package dev.nikkune.safetynet.alerts.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -9,6 +10,8 @@ import lombok.Data;
  */
 @Data
 public class FireStationDTO {
+    @NotBlank(message = "Address is required")
     private String address;
+    @NotBlank(message = "Station is required")
     private String station;
 }

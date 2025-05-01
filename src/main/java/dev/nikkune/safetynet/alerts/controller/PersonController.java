@@ -5,7 +5,9 @@ import dev.nikkune.safetynet.alerts.mapper.PersonMapper;
 import dev.nikkune.safetynet.alerts.model.Person;
 import dev.nikkune.safetynet.alerts.service.PersonService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/person")
+@Validated
 public class PersonController {
     private final PersonService service;
     private final PersonMapper mapper;
@@ -30,9 +33,10 @@ public class PersonController {
      * Retrieves all the people from the database.
      * <p>
      * Returns the list of all people stored in the database.
+     *
      * @return a list of all people
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<PersonDTO>> getAllPersons() {
         List<Person> persons = service.getAll();
         List<PersonDTO> personsDTO = persons.stream().map(mapper::toDTO).toList();
@@ -49,19 +53,15 @@ public class PersonController {
      * with the message "Person not found".
      *
      * @param firstName the first name of the person to retrieve
-     * @param lastName the last name of the person to retrieve
+     * @param lastName  the last name of the person to retrieve
      * @return the person with the given first and last name
      * @throws RuntimeException if no person is found with the given first and last name
      */
-    @GetMapping("/")
-    public ResponseEntity<PersonDTO> getPersonByFirstNameAndLastName(@RequestParam String firstName, @RequestParam String lastName) {
-        try {
-            Person person = service.get(firstName, lastName);
-            PersonDTO personDTO = mapper.toDTO(person);
-            return ResponseEntity.ok(personDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Person not found");
-        }
+    @GetMapping
+    public ResponseEntity<PersonDTO> getPersonByFirstNameAndLastName(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        Person person = service.get(firstName, lastName);
+        PersonDTO personDTO = mapper.toDTO(person);
+        return ResponseEntity.ok(personDTO);
     }
 
     /**
@@ -78,7 +78,7 @@ public class PersonController {
      * @throws RuntimeException if no person is found with the given address
      */
     @GetMapping("/address")
-    public ResponseEntity<List<PersonDTO>> getPersonsByAddress(@RequestParam String address) {
+    public ResponseEntity<List<PersonDTO>> getPersonsByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
         List<Person> persons = service.getByAddress(address);
         List<PersonDTO> personsDTO = persons.stream().map(mapper::toDTO).toList();
         return ResponseEntity.ok(personsDTO);
@@ -96,12 +96,8 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonDTO personDTO) {
         Person person = mapper.toEntity(personDTO);
-        try {
-            service.create(person);
-            return ResponseEntity.ok(personDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Person already exists");
-        }
+        service.create(person);
+        return ResponseEntity.ok(personDTO);
     }
 
     /**
@@ -115,12 +111,8 @@ public class PersonController {
     @PutMapping
     public ResponseEntity<PersonDTO> updatePerson(@Valid @RequestBody PersonDTO personDTO) {
         Person person = mapper.toEntity(personDTO);
-        try {
-            service.update(person);
-            return ResponseEntity.ok(personDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Person not found");
-        }
+        service.update(person);
+        return ResponseEntity.ok(personDTO);
     }
 
     /**
@@ -130,17 +122,11 @@ public class PersonController {
      * a RuntimeException is thrown with the message "Person not found".
      *
      * @param firstName the first name of the person to delete
-     * @param lastName the last name of the person to delete
+     * @param lastName  the last name of the person to delete
      */
     @DeleteMapping
-    public ResponseEntity<Void> deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
-        try {
-            service.delete(firstName, lastName);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Person not found");
-        }
+    public ResponseEntity<Void> deletePerson(@RequestParam @NotBlank(message = "First name is required") String firstName, @RequestParam @NotBlank(message = "Last name is required") String lastName) {
+        service.delete(firstName, lastName);
+        return ResponseEntity.noContent().build();
     }
-
-    // TODO Exceptions Handling
 }

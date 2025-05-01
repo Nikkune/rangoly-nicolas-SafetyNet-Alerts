@@ -3,7 +3,6 @@ package dev.nikkune.safetynet.alerts.mapper;
 import dev.nikkune.safetynet.alerts.dto.FireStationDTO;
 import dev.nikkune.safetynet.alerts.model.FireStation;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 /**
  * The FireStationMapper interface provides methods for converting between
@@ -14,8 +13,6 @@ import org.mapstruct.factory.Mappers;
  */
 @Mapper(componentModel = "spring")
 public interface FireStationMapper {
-
-    FireStationMapper INSTANCE = Mappers.getMapper(FireStationMapper.class);
 
     /**
      * Converts a FireStation to a FireStationDTO.
