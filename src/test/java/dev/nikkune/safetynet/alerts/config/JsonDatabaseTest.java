@@ -82,16 +82,16 @@ public class JsonDatabaseTest {
 
     @Test
     public void testLoadData() {
-        //Arrange
+        // Arrange
 
-        //Act
+        // Act
         assertDoesNotThrow(() -> jsonDatabase.loadData());
 
         List<Person> people = jsonDatabase.people();
         List<FireStation> fireStations = jsonDatabase.fireStations();
         List<MedicalRecord> medicalRecords = jsonDatabase.medicalRecords();
 
-        //Assert
+        // Assert
         assertNotNull(people);
         assertEquals(2, people.size());
         assertEquals("John", people.get(0).getFirstName());
@@ -109,16 +109,16 @@ public class JsonDatabaseTest {
 
     @Test
     public void testSaveData() throws Exception {
-        //Arrange
+        // Arrange
         jsonDatabase.loadData();
 
         File tempFile = File.createTempFile("test", ".json");
         when(resourceMock.getFile()).thenReturn(tempFile);
 
-        //Act
+        // Act
         assertDoesNotThrow(() -> jsonDatabase.saveData());
 
-        //Assert
+        // Assert
         assertTrue(tempFile.length() > 0);
 
         String writtenContent = new String(readAllBytes(tempFile.toPath()));
@@ -126,25 +126,25 @@ public class JsonDatabaseTest {
         assertTrue(writtenContent.contains("\"firestations\""));
         assertTrue(writtenContent.contains("\"medicalrecords\""));
 
-        //Clean up
+        // Clean up
         tempFile.delete();
     }
 
     @Test
     public void testLoadDataThrowsException() throws Exception {
-        //Arrange
+        // Arrange
         when(resourceMock.getInputStream()).thenThrow(new RuntimeException("Test exception"));
 
-        //Act & Assert
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> jsonDatabase.loadData());
     }
 
     @Test
     public void testSaveDataThrowsException() throws Exception {
-        //Arrange
+        // Arrange
         when(resourceMock.getFile()).thenThrow(new RuntimeException("Test exception"));
 
-        //Act & Assert
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> jsonDatabase.saveData());
     }
 }

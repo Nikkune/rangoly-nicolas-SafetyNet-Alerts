@@ -59,12 +59,12 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testGetAll() {
-        //Arrange
+        // Arrange
 
-        //Act
+        // Act
         List<MedicalRecord> result = medicalRecordService.getAll();
 
-        //Assert
+        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         verify(jsonDatabase, times(1)).medicalRecords();
@@ -72,14 +72,14 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testGetRecordFound() {
-        //Arrange
+        // Arrange
         String firstName = "John";
         String lastName = "Doe";
 
-        //Act
+        // Act
         MedicalRecord result = medicalRecordService.get(firstName, lastName);
 
-        //Assert
+        // Assert
         assertNotNull(result);
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
@@ -88,11 +88,11 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testGetRecordNotFound() {
-        //Arrange
+        // Arrange
         String firstName = "Alice";
         String lastName = "Wonderland";
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> medicalRecordService.get(firstName, lastName));
         assertEquals("Medical record not found", exception.getMessage());
         verify(jsonDatabase, times(1)).medicalRecords();
@@ -100,7 +100,7 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testCreateRecordSuccess() {
-        //Arrange
+        // Arrange
         MedicalRecord record = new MedicalRecord();
         record.setFirstName("Jane");
         record.setLastName("Doe");
@@ -108,10 +108,10 @@ public class MedicalRecordServiceTest {
         record.setMedications(List.of(new String[]{"medication1", "medication2"}));
         record.setAllergies(List.of(new String[]{"allergy1", "allergy2"}));
 
-        //Act
+        // Act
         medicalRecordService.create(record);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(2)).medicalRecords();
         verify(jsonDatabase, times(1)).people();
         verify(jsonDatabase, times(1)).saveData();
@@ -120,7 +120,7 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testCreateRecordPersonNotFound() {
-        //Arrange
+        // Arrange
         MedicalRecord record = new MedicalRecord();
         record.setFirstName("Alice");
         record.setLastName("Wonderland");
@@ -128,7 +128,7 @@ public class MedicalRecordServiceTest {
         record.setMedications(List.of(new String[]{"medication1", "medication2"}));
         record.setAllergies(List.of(new String[]{"allergy1", "allergy2"}));
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> medicalRecordService.create(record));
         assertEquals("Person not found", exception.getMessage());
         verify(jsonDatabase, times(1)).people();
@@ -136,7 +136,7 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testCreateRecordExists() {
-        //Arrange
+        // Arrange
         MedicalRecord record = new MedicalRecord();
         record.setFirstName("John");
         record.setLastName("Doe");
@@ -144,7 +144,7 @@ public class MedicalRecordServiceTest {
         record.setMedications(List.of(new String[]{"medication1", "medication2"}));
         record.setAllergies(List.of(new String[]{"allergy1", "allergy2"}));
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> medicalRecordService.create(record));
         assertEquals("Medical record already exists", exception.getMessage());
         verify(jsonDatabase, times(1)).medicalRecords();
@@ -152,7 +152,7 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testUpdateRecordSuccess() {
-        //Arrange
+        // Arrange
         MedicalRecord record = new MedicalRecord();
         record.setFirstName("John");
         record.setLastName("Doe");
@@ -160,10 +160,10 @@ public class MedicalRecordServiceTest {
         record.setMedications(List.of(new String[]{"medication1", "medication2"}));
         record.setAllergies(List.of(new String[]{"allergy1", "allergy2"}));
 
-        //Act
+        // Act
         medicalRecordService.update(record);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(1)).medicalRecords();
         verify(jsonDatabase, times(1)).saveData();
         assertEquals("01/01/2001", jsonDatabase.medicalRecords().get(0).getBirthdate());
@@ -171,7 +171,7 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testUpdateRecordNotFound() {
-        //Arrange
+        // Arrange
         MedicalRecord record = new MedicalRecord();
         record.setFirstName("Alice");
         record.setLastName("Wonderland");
@@ -179,7 +179,7 @@ public class MedicalRecordServiceTest {
         record.setMedications(List.of(new String[]{"medication1", "medication2"}));
         record.setAllergies(List.of(new String[]{"allergy1", "allergy2"}));
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> medicalRecordService.update(record));
         assertEquals("Medical record not found", exception.getMessage());
         verify(jsonDatabase, times(1)).medicalRecords();
@@ -187,14 +187,14 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testDeleteRecordSuccess() {
-        //Arrange
+        // Arrange
         String firstName = "John";
         String lastName = "Doe";
 
-        //Act
+        // Act
         medicalRecordService.delete(firstName, lastName);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(2)).medicalRecords();
         verify(jsonDatabase, times(1)).saveData();
         assertEquals(0, jsonDatabase.medicalRecords().size());
@@ -202,11 +202,11 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void testDeleteRecordNotFound() {
-        //Arrange
+        // Arrange
         String firstName = "Alice";
         String lastName = "Wonderland";
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> medicalRecordService.delete(firstName, lastName));
         assertEquals("Medical record not found", exception.getMessage());
         verify(jsonDatabase, times(1)).medicalRecords();

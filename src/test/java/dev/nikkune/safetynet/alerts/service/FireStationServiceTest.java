@@ -57,12 +57,12 @@ public class FireStationServiceTest {
 
     @Test
     public void testGetAll() {
-        //Arrange
+        // Arrange
 
-        //Act
+        // Act
         List<FireStation> result = fireStationService.getAll();
 
-        //Assert
+        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         verify(jsonDatabase, times(1)).fireStations();
@@ -70,40 +70,43 @@ public class FireStationServiceTest {
 
     @Test
     public void testGetFireStationByAddressFound() {
-        //Arrange
+        // Arrange
         String address = "123 Main St";
 
-        //Act
-        FireStation result = fireStationService.getByAddress(address);
+        // Act
+        List<FireStation> results = fireStationService.getByAddress(address);
 
-        //Assert
-        assertNotNull(result);
-        assertEquals("123 Main St", result.getAddress());
-        assertEquals("1", result.getStation());
-        assertEquals(2, result.getPersons().size());
+        // Assert
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals("123 Main St", results.get(0).getAddress());
+        assertEquals("1", results.get(0).getStation());
+        assertEquals(2, results.get(0).getPersons().size());
         verify(jsonDatabase, times(1)).fireStations();
     }
 
     @Test
     public void testGetFireStationByAddressNotFound() {
-        //Arrange
+        // Arrange
         String address = "456 Main St";
+        // Act
+        List<FireStation> results = fireStationService.getByAddress(address);
 
-        //Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> fireStationService.getByAddress(address));
-        assertEquals("Fire station not found", exception.getMessage());
+        // Assert
+        assertNotNull(results);
+        assertEquals(0, results.size());
         verify(jsonDatabase, times(1)).fireStations();
     }
 
     @Test
     public void testGetFireStationByStationFound() {
-        //Arrange
+        // Arrange
         String station = "1";
 
-        //Act
+        // Act
         List<FireStation> result = fireStationService.get(station);
 
-        //Assert
+        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("123 Main St", result.get(0).getAddress());
@@ -112,26 +115,29 @@ public class FireStationServiceTest {
 
     @Test
     public void testGetFireStationByStationNotFound() {
-        //Arrange
+        // Arrange
         String station = "2";
 
-        //Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> fireStationService.get(station));
-        assertEquals("Fire stations not found", exception.getMessage());
+        // Act
+        List<FireStation> results = fireStationService.get(station);
+
+        // Assert
+        assertNotNull(results);
+        assertEquals(0, results.size());
         verify(jsonDatabase, times(1)).fireStations();
     }
 
     @Test
     public void testCreateFireStationSuccess() {
-        //Arrange
+        // Arrange
         FireStation fireStation = new FireStation();
         fireStation.setAddress("456 Main St");
         fireStation.setStation("2");
 
-        //Act
+        // Act
         fireStationService.create(fireStation);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(2)).fireStations();
         verify(jsonDatabase, times(1)).saveData();
         assertEquals(2, jsonDatabase.fireStations().size());
@@ -139,12 +145,12 @@ public class FireStationServiceTest {
 
     @Test
     public void testCreateFireStationAlreadyExists() {
-        //Arrange
+        // Arrange
         FireStation fireStation = new FireStation();
         fireStation.setAddress("123 Main St");
         fireStation.setStation("1");
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> fireStationService.create(fireStation));
         assertEquals("Fire station already exists", exception.getMessage());
         verify(jsonDatabase, times(1)).fireStations();
@@ -152,15 +158,15 @@ public class FireStationServiceTest {
 
     @Test
     public void testUpdateFireStationSuccess() {
-        //Arrange
+        // Arrange
         FireStation fireStation = new FireStation();
         fireStation.setAddress("123 Main St");
         fireStation.setStation("2");
 
-        //Act
+        // Act
         fireStationService.update(fireStation);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(1)).fireStations();
         verify(jsonDatabase, times(1)).saveData();
         assertEquals(1, jsonDatabase.fireStations().size());
@@ -171,12 +177,12 @@ public class FireStationServiceTest {
 
     @Test
     public void testUpdateFireStationNotFound() {
-        //Arrange
+        // Arrange
         FireStation fireStation = new FireStation();
         fireStation.setAddress("456 Main St");
         fireStation.setStation("2");
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> fireStationService.update(fireStation));
         assertEquals("Fire station not found", exception.getMessage());
         verify(jsonDatabase, times(1)).fireStations();
@@ -184,13 +190,13 @@ public class FireStationServiceTest {
 
     @Test
     public void testDeleteFireStationByAddressSuccess() {
-        //Arrange
+        // Arrange
         String address = "123 Main St";
 
-        //Act
+        // Act
         fireStationService.deleteByAddress(address);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(2)).fireStations();
         verify(jsonDatabase, times(1)).saveData();
         assertEquals(0, jsonDatabase.fireStations().size());
@@ -198,10 +204,10 @@ public class FireStationServiceTest {
 
     @Test
     public void testDeleteFireStationByAddressNotFound() {
-        //Arrange
+        // Arrange
         String address = "456 Main St";
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> fireStationService.deleteByAddress(address));
         assertEquals("Fire station not found", exception.getMessage());
         verify(jsonDatabase, times(1)).fireStations();
@@ -209,13 +215,13 @@ public class FireStationServiceTest {
 
     @Test
     public void testDeleteFireStationByStationSuccess() {
-        //Arrange
+        // Arrange
         String station = "1";
 
-        //Act
+        // Act
         fireStationService.deleteByStation(station);
 
-        //Assert
+        // Assert
         verify(jsonDatabase, times(2)).fireStations();
         verify(jsonDatabase, times(1)).saveData();
         assertEquals(0, jsonDatabase.fireStations().size());
@@ -223,10 +229,10 @@ public class FireStationServiceTest {
 
     @Test
     public void testDeleteFireStationByStationNotFound() {
-        //Arrange
+        // Arrange
         String station = "2";
 
-        //Act & Assert
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> fireStationService.deleteByStation(station));
         assertEquals("Fire station not found", exception.getMessage());
         verify(jsonDatabase, times(1)).fireStations();
