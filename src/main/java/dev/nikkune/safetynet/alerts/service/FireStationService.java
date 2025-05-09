@@ -32,45 +32,26 @@ public class FireStationService {
     }
 
     /**
-     * Retrieves a list of fire station from the database by station number.
-     * <p>
-     * Returns a list of fire station associated with the given station number.
-     * <p>
-     * If no fire station is associated with the given number, a RuntimeException is thrown
-     * with the message "Fire stations not found".
+     * Retrieves a list of fire stations associated with the given station number.
+     * Filters and returns fire stations from the database that match the specified station number.
      *
-     * @param station the number of the fire stations to retrieve
-     * @return a list of fire station associated with the given number
-     * @throws RuntimeException if no fire station is associated with the given number
+     * @param station the station number used to find the associated fire stations
+     * @return a list of fire stations associated with the given station number
+     * @throws RuntimeException if an error occurs during the retrieval process
      */
     public List<FireStation> get(String station) throws RuntimeException {
-        List<FireStation> fireStations = jsonDatabase.fireStations().stream().filter(f -> f.getStation().equals(station)).toList();
-        if (fireStations.isEmpty()) {
-            throw new RuntimeException("Fire stations not found");
-        }
-        return fireStations;
+        return jsonDatabase.fireStations().stream().filter(f -> f.getStation().equals(station)).toList();
     }
 
-/**
- * Retrieves a fire station from the database by address.
- * <p>
- * Searches the database for a fire station associated with the given address
- * and returns it if found.
- * <p>
- * If no fire station is found with the given address, a RuntimeException is thrown
- * with the message "Fire station not found".
- *
- * @param address the address of the fire station to retrieve
- * @return the fire station associated with the given address
- * @throws RuntimeException if no fire station is found with the given address
- */
-    public FireStation getByAddress(String address) {
-        FireStation existingFireStation = jsonDatabase.fireStations().stream().filter(f -> f.getAddress().equals(address)).findFirst().orElse(null);
-        if (existingFireStation != null) {
-            return existingFireStation;
-        } else {
-            throw new RuntimeException("Fire station not found");
-        }
+    /**
+     * Retrieves a list of fire stations from the database by their associated address.
+     * Filters the fire station records based on the given address.
+     *
+     * @param address the address used to find the associated fire stations
+     * @return a list of fire stations associated with the given address
+     */
+    public List<FireStation> getByAddress(String address) {
+        return jsonDatabase.fireStations().stream().filter(f -> f.getAddress().equals(address)).toList();
     }
 
     /**

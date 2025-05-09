@@ -8,10 +8,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,6 +68,10 @@ public class FireStationController {
         logger.debug("Received request for fire station by station number : {}", number);
         List<FireStation> fireStations = service.get(number);
         List<FireStationDTO> fireStationDTOS = fireStations.stream().map(mapper::toDTO).toList();
+        if (fireStations.isEmpty()) {
+            logger.error("No fire station found for station number : {}", number);
+            return new ResponseEntity<>(fireStationDTOS, HttpStatus.NOT_FOUND);
+        }
         logger.info("Retrieved {} fire stations by station number", fireStations.size());
         return ResponseEntity.ok(fireStationDTOS);
     }
@@ -81,12 +88,16 @@ public class FireStationController {
      * @throws RuntimeException if the fire station is not found
      */
     @GetMapping("/address")
-    public ResponseEntity<FireStationDTO> getFireStationByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
+    public ResponseEntity<List<FireStationDTO>> getFireStationByAddress(@RequestParam @NotBlank(message = "Address is required") String address) {
         logger.debug("Received request for fire station by address : {}", address);
-        FireStation fireStation = service.getByAddress(address);
-        FireStationDTO fireStationDTO = mapper.toDTO(fireStation);
+        List<FireStation> fireStations = service.getByAddress(address);
+        List<FireStationDTO> fireStationDTOS = fireStations.stream().map(mapper::toDTO).toList();
+        if (fireStations.isEmpty()) {
+            logger.error("No fire station found for address : {}", address);
+            return new ResponseEntity<>(fireStationDTOS, HttpStatus.NOT_FOUND);
+        }
         logger.info("Retrieved fire station by address");
-        return ResponseEntity.ok(fireStationDTO);
+        return ResponseEntity.ok(fireStationDTOS);
     }
 
     /**

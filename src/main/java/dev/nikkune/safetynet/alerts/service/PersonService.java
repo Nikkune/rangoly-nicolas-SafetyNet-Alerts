@@ -1,6 +1,7 @@
 package dev.nikkune.safetynet.alerts.service;
 
 import dev.nikkune.safetynet.alerts.config.JsonDatabase;
+import dev.nikkune.safetynet.alerts.model.MedicalRecord;
 import dev.nikkune.safetynet.alerts.model.Person;
 import org.springframework.stereotype.Service;
 
@@ -111,21 +112,23 @@ public class PersonService {
 
 
     /**
-     * Deletes a person from the database.
-     * <p>
-     * Finds the person by the given first and last name and removes it from the database.
-     * Persists the changes to the database.
-     * <p>
-     * If no person is found with the given first and last name, a RuntimeException is thrown
-     * with the message "Person not found".
+     * Deletes a person and their associated medical records from the database.
+     *
+     * If a person with the specified first and last name exists in the database,
+     * they and their associated medical records will be removed. If the person
+     * is not found, a RuntimeException is thrown with the message "Person not found".
      *
      * @param firstName the first name of the person to delete
      * @param lastName the last name of the person to delete
-     * @throws RuntimeException if no person is found with the given first and last name
+     * @throws RuntimeException if the person is not found in the database
      */
     public void delete(String firstName, String lastName) throws RuntimeException {
         Person existingPerson = jsonDatabase.people().stream().filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)).findFirst().orElse(null);
+        MedicalRecord existingMedicalRecord = jsonDatabase.medicalRecords().stream().filter(record -> record.getFirstName().equals(firstName) && record.getLastName().equals(lastName)).findFirst().orElse(null);
         if (existingPerson != null) {
+            if (existingMedicalRecord != null) {
+                jsonDatabase.medicalRecords().remove(existingMedicalRecord);
+            }
             jsonDatabase.people().remove(existingPerson);
             jsonDatabase.saveData();
         } else {
