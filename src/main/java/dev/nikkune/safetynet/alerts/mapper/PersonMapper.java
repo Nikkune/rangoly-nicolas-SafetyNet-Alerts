@@ -12,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
  * This is a MapStruct mapper and is used for mapping between the
  * domain model and data transfer objects.
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface PersonMapper {
     /**
      * Converts a Person to a PersonDTO.
