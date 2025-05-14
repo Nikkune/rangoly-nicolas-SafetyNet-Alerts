@@ -3,19 +3,18 @@ package dev.nikkune.safetynet.alerts.controller;
 import dev.nikkune.safetynet.alerts.dto.FireStationDTO;
 import dev.nikkune.safetynet.alerts.mapper.FireStationMapper;
 import dev.nikkune.safetynet.alerts.model.FireStation;
-import dev.nikkune.safetynet.alerts.model.Person;
 import dev.nikkune.safetynet.alerts.service.FireStationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -60,7 +59,7 @@ public class FireStationControllerTest {
         when(fireStationMapper.toDTO(any(FireStation.class))).thenReturn(fireStationDTO);
 
         // Act & Assert
-        mockMvc.perform(get("/firestation/all"))
+        mockMvc.perform(get("/firestations/all"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -72,7 +71,7 @@ public class FireStationControllerTest {
     }
 
     @Test
-    public void testGetFireStationByStationNumber_Found() throws Exception {
+    public void testGetFireStationByStationNumber() throws Exception {
         // Arrange
         List<FireStation> fireStations = new ArrayList<>();
         FireStation fireStation = new FireStation();
@@ -88,7 +87,8 @@ public class FireStationControllerTest {
         when(fireStationMapper.toDTO(any(FireStation.class))).thenReturn(fireStationDTO);
 
         // Act & Assert
-        mockMvc.perform(get("/firestation").param("number", "1"))
+        mockMvc.perform(get("/firestations")
+                .param("number", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -102,20 +102,21 @@ public class FireStationControllerTest {
     @Test
     public void testGetFireStationByStationNumber_NotFound() throws Exception {
         // Arrange
-        when(fireStationService.get("2")).thenReturn(Collections.emptyList());
+        when(fireStationService.get("999")).thenReturn(new ArrayList<>());
 
         // Act & Assert
-        mockMvc.perform(get("/firestation").param("number", "2"))
+        mockMvc.perform(get("/firestations")
+                .param("number", "999"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
 
-        verify(fireStationService, times(1)).get("2");
+        verify(fireStationService, times(1)).get("999");
         verify(fireStationMapper, never()).toDTO(any(FireStation.class));
     }
 
     @Test
-    public void testGetFireStationByAddress_Found() throws Exception {
+    public void testGetFireStationByAddress() throws Exception {
         // Arrange
         List<FireStation> fireStations = new ArrayList<>();
         FireStation fireStation = new FireStation();
@@ -131,7 +132,8 @@ public class FireStationControllerTest {
         when(fireStationMapper.toDTO(any(FireStation.class))).thenReturn(fireStationDTO);
 
         // Act & Assert
-        mockMvc.perform(get("/firestation/address").param("address", "123 Main St"))
+        mockMvc.perform(get("/firestations/address")
+                .param("address", "123 Main St"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -145,15 +147,16 @@ public class FireStationControllerTest {
     @Test
     public void testGetFireStationByAddress_NotFound() throws Exception {
         // Arrange
-        when(fireStationService.getByAddress("456 Main St")).thenReturn(Collections.emptyList());
+        when(fireStationService.getByAddress("Unknown Address")).thenReturn(new ArrayList<>());
 
         // Act & Assert
-        mockMvc.perform(get("/firestation/address").param("address", "456 Main St"))
+        mockMvc.perform(get("/firestations/address")
+                .param("address", "Unknown Address"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
 
-        verify(fireStationService, times(1)).getByAddress("456 Main St");
+        verify(fireStationService, times(1)).getByAddress("Unknown Address");
         verify(fireStationMapper, never()).toDTO(any(FireStation.class));
     }
 
@@ -172,7 +175,7 @@ public class FireStationControllerTest {
         doNothing().when(fireStationService).create(any(FireStation.class));
 
         // Act & Assert
-        mockMvc.perform(post("/firestation")
+        mockMvc.perform(post("/firestations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"address\":\"123 Main St\",\"station\":\"1\"}"))
                 .andExpect(status().isOk())
@@ -199,7 +202,7 @@ public class FireStationControllerTest {
         doNothing().when(fireStationService).update(any(FireStation.class));
 
         // Act & Assert
-        mockMvc.perform(put("/firestation")
+        mockMvc.perform(put("/firestations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"address\":\"123 Main St\",\"station\":\"2\"}"))
                 .andExpect(status().isOk())
@@ -217,19 +220,21 @@ public class FireStationControllerTest {
         doNothing().when(fireStationService).deleteByAddress("123 Main St");
 
         // Act & Assert
-        mockMvc.perform(delete("/firestation").param("address", "123 Main St"))
+        mockMvc.perform(delete("/firestations")
+                .param("address", "123 Main St"))
                 .andExpect(status().isNoContent());
 
         verify(fireStationService, times(1)).deleteByAddress("123 Main St");
     }
 
     @Test
-    public void testDeleteFireStationByStation() throws Exception {
+    public void testDeleteFireStation() throws Exception {
         // Arrange
         doNothing().when(fireStationService).deleteByStation("1");
 
         // Act & Assert
-        mockMvc.perform(delete("/firestation/station").param("number", "1"))
+        mockMvc.perform(delete("/firestations/station")
+                .param("number", "1"))
                 .andExpect(status().isNoContent());
 
         verify(fireStationService, times(1)).deleteByStation("1");

@@ -21,7 +21,7 @@ import java.util.List;
  * It provides methods to get all the fire stations, get a fire station by its station number, create a new fire station, update an existing fire station, and delete a fire station.
  */
 @RestController
-@RequestMapping("/firestation")
+@RequestMapping("/firestations")
 @Validated
 public class FireStationController {
     private final FireStationService service;
