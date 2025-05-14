@@ -24,6 +24,7 @@ public class PersonService {
      * Gets all the people from the database.
      * <p>
      * Returns the list of all people stored in the database.
+     *
      * @return a list of all people
      */
     public List<Person> getAll() {
@@ -39,7 +40,7 @@ public class PersonService {
      * with the message "Person not found".
      *
      * @param firstName the first name of the person to retrieve
-     * @param lastName the last name of the person to retrieve
+     * @param lastName  the last name of the person to retrieve
      * @return the person with the given first and last name
      * @throws RuntimeException if no person is found with the given name
      */
@@ -113,13 +114,13 @@ public class PersonService {
 
     /**
      * Deletes a person and their associated medical records from the database.
-     *
+     * <p>
      * If a person with the specified first and last name exists in the database,
      * they and their associated medical records will be removed. If the person
      * is not found, a RuntimeException is thrown with the message "Person not found".
      *
      * @param firstName the first name of the person to delete
-     * @param lastName the last name of the person to delete
+     * @param lastName  the last name of the person to delete
      * @throws RuntimeException if the person is not found in the database
      */
     public void delete(String firstName, String lastName) throws RuntimeException {

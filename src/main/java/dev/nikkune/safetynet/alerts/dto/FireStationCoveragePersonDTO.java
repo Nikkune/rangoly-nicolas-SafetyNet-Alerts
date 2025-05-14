@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class FireStationCoveragePersonDTO extends PersonBaseDTO{
+public class FireStationCoveragePersonDTO extends PersonBaseDTO {
     private String address;
     private String phone;
 }

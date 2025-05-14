@@ -39,6 +39,13 @@ public class URLService {
         this.personInfoMapper = personInfoMapper;
     }
 
+    /**
+     * Retrieves information about persons covered by a specific fire station.
+     * This includes a list of persons, the number of adults, and the number of children.
+     *
+     * @param stationNumber the identifier of the fire station for which the information is to be retrieved
+     * @return a FireStationCoverageDTO containing lists of persons covered, the number of adults, and the number of children
+     */
     public FireStationCoverageDTO getPersonCoveredByStation(String stationNumber) {
         List<FireStation> fireStations = jsonDatabase.fireStations().stream().filter(fireStation -> fireStation.getStation().equals(stationNumber)).toList();
         List<Person> people = fireStations.stream().flatMap(fireStation -> fireStation.getPersons().stream()).toList();
@@ -52,11 +59,22 @@ public class URLService {
         return fireStationCoverageDTO;
     }
 
+    /**
+     * Retrieves a list of children residing at the specified address along with
+     * other household members. For each child, this method returns their details
+     * and a list of other non-child persons living in the same household.
+     *
+     * @param address the address for which the children and household member details
+     *                are to be retrieved
+     * @return a list of ChildAlertDTO objects, each containing details of a child
+     *         and a list of other household members; if no children are found at
+     *         the address, an empty list is returned
+     */
     public List<ChildAlertDTO> getChildAlert(String address) {
         List<Person> persons = jsonDatabase.people().stream().filter(person -> person.getAddress().equals(address)).toList();
         List<Person> children = persons.stream().filter(person -> AgeCalculator.calculateAge(person.getMedicalRecord().getBirthdate()) <= 18).toList();
 
-        if (children.isEmpty()){
+        if (children.isEmpty()) {
             return new ArrayList<>();
         }
 
@@ -71,12 +89,12 @@ public class URLService {
 
     /**
      * Retrieves a list of phone numbers for all persons covered by the specified fire station.
-     *
+     * <p>
      * This method queries the list of fire stations to find the ones matching the provided station number.
      * It then collects and returns the phone numbers of all persons associated with these fire stations.
      *
      * @param stationNumber the identifier of the fire station whose associated persons' phone numbers are to be retrieved
-     * @return a list of phone numbers of persons associated with the specified fire station
+     * @return a set of phone numbers of persons associated with the specified fire station
      */
     public Set<String> getPhoneAlert(String stationNumber) {
         List<FireStation> fireStations = jsonDatabase.fireStations().stream().filter(fireStation -> fireStation.getStation().equals(stationNumber)).toList();
@@ -84,6 +102,15 @@ public class URLService {
         return people.stream().map(Person::getPhone).collect(Collectors.toSet());
     }
 
+    /**
+     * Retrieves a list of fire-related information for the specified address.
+     * This includes the fire station details and the residents living at the address,
+     * represented by their mapped DTO objects.
+     *
+     * @param address the address for which fire-related information is to be retrieved
+     * @return a list of FireAddressDTO objects containing the fire station details and
+     *         the corresponding residents living at the specified address
+     */
     public List<FireAddressDTO> getFire(String address) {
         List<FireStation> fireStations = jsonDatabase.fireStations().stream().filter(fireStation -> fireStation.getAddress().equals(address)).toList();
         return fireStations.stream().map(station -> {
@@ -95,6 +122,15 @@ public class URLService {
         }).toList();
     }
 
+    /**
+     * Retrieves a list of addresses covered by the specified fire stations, including details
+     * about persons grouped by each address.
+     *
+     * @param stationNumbers a comma-separated string of fire station identifiers for which
+     *                       the coverage information is to be retrieved
+     * @return a list of FloodAddressDTO objects, each containing the address and the coverage
+     *         information (details about persons grouped by address) for the specified fire stations
+     */
     public List<FloodAddressDTO> getFloodPersonCoveredByStation(String stationNumbers) {
         List<String> stations = List.of(stationNumbers.split(","));
         List<FireStation> fireStations = new ArrayList<>();
@@ -109,6 +145,12 @@ public class URLService {
         }).toList();
     }
 
+    /**
+     * Retrieves a list of detailed information about all persons with the specified last name.
+     *
+     * @param lastName the last name of the persons whose information is to be retrieved
+     * @return a list of PersonInfoDTO objects containing the detailed information of the persons with the specified last name
+     */
     public List<PersonInfoDTO> getPersonInfo(String lastName) {
         return jsonDatabase.people().stream().filter(person -> person.getLastName().equals(lastName)).map(personInfoMapper::toDTO).toList();
     }
@@ -117,7 +159,7 @@ public class URLService {
      * Retrieves a list of email addresses of all persons residing in the specified city.
      *
      * @param city the name of the city for which the email addresses are to be retrieved
-     * @return a list of email addresses of persons residing in the specified city
+     * @return a set of email addresses of persons residing in the specified city
      */
     public Set<String> getCommunityEmail(String city) {
         List<Person> people = jsonDatabase.people().stream().filter(person -> person.getCity().equals(city)).toList();

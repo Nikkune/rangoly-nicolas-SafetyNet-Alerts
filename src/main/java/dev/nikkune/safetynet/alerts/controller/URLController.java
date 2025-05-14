@@ -18,14 +18,22 @@ import java.util.Set;
 @RestController
 @Validated
 public class URLController {
-    private final URLService service;
-
     private static final Logger logger = LogManager.getLogger(URLController.class);
+    private final URLService service;
 
     public URLController(URLService service) {
         this.service = service;
     }
 
+    /**
+     * Retrieves a list of persons covered by the specified fire station, along with additional
+     * information about the number of adults and children.
+     *
+     * @param stationNumber the identifier of the fire station whose associated persons and related
+     *                      information are to be retrieved, must not be blank
+     * @return a ResponseEntity containing a list of FireStationCoverageDTO objects with details of persons
+     *         covered by the specified fire station, or an empty list if no persons are found
+     */
     @GetMapping("/firestation")
     public ResponseEntity<List<FireStationCoverageDTO>> getPersonCoveredByStation(@RequestParam @NotBlank(message = "Station Number is required") String stationNumber) {
         logger.debug("Received request to get person covered by station {}", stationNumber);
@@ -37,6 +45,16 @@ public class URLController {
         return ResponseEntity.ok(List.of(fireStationCoverageDTO));
     }
 
+    /**
+     * Retrieves a list of persons living at the specified address and indicates
+     * which of them are children along with their family members.
+     *
+     * @param address the address for which the child alert information is to be retrieved;
+     *                must not be blank
+     * @return a ResponseEntity containing a list of ChildAlertDTO objects providing
+     *         details about children and their family members at the specified address;
+     *         returns an empty list with a NOT_FOUND status if no information is found
+     */
     @GetMapping("/childAlert")
     public ResponseEntity<List<ChildAlertDTO>> getPersonWithChildAlert(@RequestParam @NotBlank(message = "Address is required") String address) {
         logger.debug("Received request to get child alert for address {}", address);
@@ -69,6 +87,14 @@ public class URLController {
         return ResponseEntity.ok(phones);
     }
 
+    /**
+     * Retrieves a list of persons residing at the specified address, along with details about fire-related
+     * emergency response, such as station coverage and medical information.
+     *
+     * @param address the address of interest for fire-related information; must not be blank
+     * @return a ResponseEntity containing a list of FireAddressDTO objects with details about persons at
+     *         the specified address, or an empty list with a NOT_FOUND status if no information is found
+     */
     @GetMapping("/fire")
     public ResponseEntity<List<FireAddressDTO>> getFire(@RequestParam @NotBlank(message = "Address is required") String address) {
         logger.debug("Received request to get fire for address {}", address);
@@ -81,6 +107,17 @@ public class URLController {
         return ResponseEntity.ok(fireDTOList);
     }
 
+    /**
+     * Retrieves a list of persons covered by the specified fire stations in case of flooding,
+     * including their medical information and addresses.
+     *
+     * @param stations the identifiers of the fire stations (comma-separated if multiple) whose
+     *                 associated persons and related flood information are to be retrieved;
+     *                 must not be blank
+     * @return a ResponseEntity containing a list of FloodAddressDTO objects with details of persons
+     *         covered by the specified fire stations and their addresses, or an empty list with
+     *         a NOT_FOUND status if no persons are found
+     */
     @GetMapping("/flood/stations")
     public ResponseEntity<List<FloodAddressDTO>> getFloodPersonCoveredByStation(@RequestParam @NotBlank(message = "Fire stations is required") String stations) {
         logger.debug("Received request to get person in flood by stations {}", stations);
@@ -93,6 +130,15 @@ public class URLController {
         return ResponseEntity.ok(floodPersonCoveredByStation);
     }
 
+    /**
+     * Retrieves a list of person details associated with the specified last name.
+     *
+     * @param lastName the last name of the persons whose information is to be retrieved;
+     *                 must not be blank
+     * @return a ResponseEntity containing a list of PersonInfoDTO objects with details
+     *         of persons matching the specified last name, or an empty list with a
+     *         NOT_FOUND status if no matching persons are found
+     */
     @GetMapping("/personInfo")
     public ResponseEntity<List<PersonInfoDTO>> getPersonInfo(@RequestParam @NotBlank(message = "Last Name is required") String lastName) {
         logger.debug("Received request to get person info for last name {}", lastName);

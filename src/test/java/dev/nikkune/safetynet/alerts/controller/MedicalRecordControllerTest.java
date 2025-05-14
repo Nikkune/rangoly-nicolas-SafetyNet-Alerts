@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -101,8 +101,8 @@ public class MedicalRecordControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/medicalrecord")
-                .param("firstName", "John")
-                .param("lastName", "Doe"))
+                        .param("firstName", "John")
+                        .param("lastName", "Doe"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("John")))
@@ -137,8 +137,8 @@ public class MedicalRecordControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/medicalrecord")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthdate\":\"01/01/1990\",\"medications\":[\"medication1\",\"medication2\"],\"allergies\":[\"allergy1\",\"allergy2\"]}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthdate\":\"01/01/1990\",\"medications\":[\"medication1\",\"medication2\"],\"allergies\":[\"allergy1\",\"allergy2\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("John")))
@@ -173,8 +173,8 @@ public class MedicalRecordControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/medicalrecord")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthdate\":\"01/01/1990\",\"medications\":[\"medication1\",\"medication2\"],\"allergies\":[\"allergy1\",\"allergy2\"]}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthdate\":\"01/01/1990\",\"medications\":[\"medication1\",\"medication2\"],\"allergies\":[\"allergy1\",\"allergy2\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("John")))
@@ -194,8 +194,8 @@ public class MedicalRecordControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/medicalrecord")
-                .param("firstName", "John")
-                .param("lastName", "Doe"))
+                        .param("firstName", "John")
+                        .param("lastName", "Doe"))
                 .andExpect(status().isNoContent());
 
         verify(medicalRecordService, times(1)).delete("John", "Doe");

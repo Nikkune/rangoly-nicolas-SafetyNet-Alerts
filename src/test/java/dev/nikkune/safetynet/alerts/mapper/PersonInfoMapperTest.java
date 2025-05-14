@@ -29,7 +29,7 @@ public class PersonInfoMapperTest {
         medicalRecord.setBirthdate("01/01/1993");
         medicalRecord.setMedications(List.of("medication1", "medication2"));
         medicalRecord.setAllergies(List.of("allergy1", "allergy2"));
-        
+
         Person person = new Person();
         person.setFirstName("John");
         person.setLastName("Doe");
@@ -48,16 +48,16 @@ public class PersonInfoMapperTest {
         assertEquals("Doe", dto.getLastName());
         assertEquals("123 Main St", dto.getAddress());
         assertEquals("john.doe@example.com", dto.getEmail());
-        
+
         // Calculate expected age based on birthdate
         int expectedAge = AgeCalculator.calculateAge("01/01/1993");
         assertEquals(expectedAge, dto.getAge());
-        
+
         // Check medical information
         assertEquals(2, dto.getMedications().size());
         assertTrue(dto.getMedications().contains("medication1"));
         assertTrue(dto.getMedications().contains("medication2"));
-        
+
         assertEquals(2, dto.getAllergies().size());
         assertTrue(dto.getAllergies().contains("allergy1"));
         assertTrue(dto.getAllergies().contains("allergy2"));
@@ -79,10 +79,10 @@ public class PersonInfoMapperTest {
     public void testBirthdateToAge() {
         // Arrange
         String birthdate = "01/01/1993";
-        
+
         // Act
         int age = PersonInfoMapper.birthdateToAge(birthdate);
-        
+
         // Assert
         int expectedAge = AgeCalculator.calculateAge(birthdate);
         assertEquals(expectedAge, age);

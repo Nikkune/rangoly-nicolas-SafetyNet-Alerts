@@ -59,7 +59,7 @@ public class FireStationService {
      * <p>
      * The new fire station is associated with all persons that are associated with the given address.
      * <p>
-     * The new fire station is added to the collection of fire stations in the database and the database is saved.
+     * The new fire station is added to the collection of fire stations in the database, and the database is saved.
      * <p>
      * If a fire station with the given address already exists, a RuntimeException is thrown
      * with the message "Fire station already exists".

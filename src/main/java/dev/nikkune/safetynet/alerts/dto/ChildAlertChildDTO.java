@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ChildAlertChildDTO extends PersonBaseDTO{
+public class ChildAlertChildDTO extends PersonBaseDTO {
     private int age;
 }

@@ -1,7 +1,6 @@
 package dev.nikkune.safetynet.alerts.utils;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -29,9 +28,7 @@ public class AgeCalculatorTest {
         // Arrange
         String birthdate = "2000/01/01";
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            AgeCalculator.calculateAge(birthdate);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> AgeCalculator.calculateAge(birthdate));
         assertEquals("Invalid birthdate format.", exception.getMessage());
     }
 
@@ -40,9 +37,7 @@ public class AgeCalculatorTest {
         // Arrange
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            AgeCalculator.calculateAge(null);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> AgeCalculator.calculateAge(null));
         assertEquals("Birthdate cannot be null or empty.", exception.getMessage());
     }
 
@@ -52,9 +47,7 @@ public class AgeCalculatorTest {
         String birthdate = "";
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            AgeCalculator.calculateAge(birthdate);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> AgeCalculator.calculateAge(birthdate));
         assertEquals("Birthdate cannot be null or empty.", exception.getMessage());
     }
 

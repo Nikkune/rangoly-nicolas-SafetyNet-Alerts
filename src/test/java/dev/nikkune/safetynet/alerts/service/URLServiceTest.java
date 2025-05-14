@@ -12,13 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class URLServiceTest {
@@ -274,7 +272,7 @@ public class URLServiceTest {
         assertEquals(2, address1.getCoverage().getNumberOfAdults());
         assertEquals(1, address1.getCoverage().getNumberOfChildren());
 
-        // Verify second address
+        // Verify the second address
         FloodAddressDTO address2 = result.stream().filter(a -> a.getAddress().equals("456 Oak St")).findFirst().orElse(null);
         assertNotNull(address2);
         assertEquals(1, address2.getCoverage().getPersons().size());

@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface FireStationCoveragePersonMapper {
-    FireStationCoveragePersonDTO toDTO (Person person);
+    FireStationCoveragePersonDTO toDTO(Person person);
 }

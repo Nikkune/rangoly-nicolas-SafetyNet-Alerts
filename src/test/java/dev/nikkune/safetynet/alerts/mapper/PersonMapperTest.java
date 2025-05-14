@@ -9,7 +9,8 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PersonMapperTest {
     private PersonMapper personMapper;

@@ -71,14 +71,14 @@ public class PersonServiceTest {
         johnMedical.setLastName("Doe");
         johnMedical.setBirthdate("01/01/1980");
         johnMedical.setMedications(Arrays.asList("medication1", "medication2"));
-        johnMedical.setAllergies(Arrays.asList("allergy1"));
+        johnMedical.setAllergies(List.of("allergy1"));
         medicalRecords.add(johnMedical);
 
         MedicalRecord janeMedical = new MedicalRecord();
         janeMedical.setFirstName("Jane");
         janeMedical.setLastName("Doe");
         janeMedical.setBirthdate("02/02/1985");
-        janeMedical.setMedications(Arrays.asList("medication3"));
+        janeMedical.setMedications(List.of("medication3"));
         janeMedical.setAllergies(Arrays.asList("allergy2", "allergy3"));
         medicalRecords.add(janeMedical);
 

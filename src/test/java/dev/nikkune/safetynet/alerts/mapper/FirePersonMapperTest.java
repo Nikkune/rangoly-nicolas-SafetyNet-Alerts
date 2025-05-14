@@ -29,7 +29,7 @@ public class FirePersonMapperTest {
         medicalRecord.setBirthdate("01/01/1993");
         medicalRecord.setMedications(List.of("medication1", "medication2"));
         medicalRecord.setAllergies(List.of("allergy1"));
-        
+
         Person person = new Person();
         person.setFirstName("John");
         person.setLastName("Doe");
@@ -47,16 +47,16 @@ public class FirePersonMapperTest {
         assertEquals("John", firePersonDTO.getFirstName());
         assertEquals("Doe", firePersonDTO.getLastName());
         assertEquals("555-555-1234", firePersonDTO.getPhone());
-        
+
         // Calculate expected age based on birthdate
         int expectedAge = AgeCalculator.calculateAge("01/01/1993");
         assertEquals(expectedAge, firePersonDTO.getAge());
-        
+
         // Check medical information
         assertEquals(2, firePersonDTO.getMedications().size());
         assertTrue(firePersonDTO.getMedications().contains("medication1"));
         assertTrue(firePersonDTO.getMedications().contains("medication2"));
-        
+
         assertEquals(1, firePersonDTO.getAllergies().size());
         assertTrue(firePersonDTO.getAllergies().contains("allergy1"));
     }
@@ -77,10 +77,10 @@ public class FirePersonMapperTest {
     public void testBirthdateToAge() {
         // Arrange
         String birthdate = "01/01/1993";
-        
+
         // Act
         int age = FirePersonMapper.birthdateToAge(birthdate);
-        
+
         // Assert
         int expectedAge = AgeCalculator.calculateAge(birthdate);
         assertEquals(expectedAge, age);

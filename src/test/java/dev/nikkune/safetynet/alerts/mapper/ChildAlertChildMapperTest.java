@@ -10,8 +10,8 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ChildAlertChildMapperTest {
     private ChildAlertChildMapper childAlertChildMapper;
@@ -30,7 +30,7 @@ public class ChildAlertChildMapperTest {
         medicalRecord.setBirthdate("01/15/2013");
         medicalRecord.setMedications(List.of());
         medicalRecord.setAllergies(List.of("allergy1"));
-        
+
         Person person = new Person();
         person.setFirstName("Jimmy");
         person.setLastName("Doe");
@@ -47,7 +47,7 @@ public class ChildAlertChildMapperTest {
         // Assert
         assertEquals("Jimmy", childDTO.getFirstName());
         assertEquals("Doe", childDTO.getLastName());
-        
+
         // Calculate expected age based on birthdate
         int expectedAge = AgeCalculator.calculateAge("01/15/2013");
         assertEquals(expectedAge, childDTO.getAge());
@@ -69,10 +69,10 @@ public class ChildAlertChildMapperTest {
     public void testBirthdateToAge() {
         // Arrange
         String birthdate = "01/15/2013";
-        
+
         // Act
         int age = ChildAlertChildMapper.birthdateToAge(birthdate);
-        
+
         // Assert
         int expectedAge = AgeCalculator.calculateAge(birthdate);
         assertEquals(expectedAge, age);

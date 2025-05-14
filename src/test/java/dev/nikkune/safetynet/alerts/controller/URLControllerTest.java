@@ -11,7 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -53,7 +56,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/firestation")
-                .param("stationNumber", "1"))
+                        .param("stationNumber", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -80,7 +83,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/firestation")
-                .param("stationNumber", "999"))
+                        .param("stationNumber", "999"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -110,7 +113,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/childAlert")
-                .param("address", "123 Main St"))
+                        .param("address", "123 Main St"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -131,7 +134,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/childAlert")
-                .param("address", "Unknown Address"))
+                        .param("address", "Unknown Address"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -150,7 +153,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/phoneAlert")
-                .param("firestation", "1"))
+                        .param("firestation", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -166,7 +169,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/phoneAlert")
-                .param("firestation", "999"))
+                        .param("firestation", "999"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -196,7 +199,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/fire")
-                .param("address", "123 Main St"))
+                        .param("address", "123 Main St"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -221,7 +224,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/fire")
-                .param("address", "Unknown Address"))
+                        .param("address", "Unknown Address"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -253,7 +256,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/flood/stations")
-                .param("stations", "1,2"))
+                        .param("stations", "1,2"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -276,7 +279,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/flood/stations")
-                .param("stations", "999"))
+                        .param("stations", "999"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -302,7 +305,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/personInfo")
-                .param("lastName", "Doe"))
+                        .param("lastName", "Doe"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -326,7 +329,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/personInfo")
-                .param("lastName", "Unknown"))
+                        .param("lastName", "Unknown"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -345,7 +348,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/communityEmail")
-                .param("city", "Anytown"))
+                        .param("city", "Anytown"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -361,7 +364,7 @@ public class URLControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/communityEmail")
-                .param("city", "Unknown"))
+                        .param("city", "Unknown"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));

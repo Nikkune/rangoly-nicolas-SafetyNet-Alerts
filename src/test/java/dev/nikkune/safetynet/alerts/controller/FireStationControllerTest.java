@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,8 +16,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -88,7 +87,7 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/firestations")
-                .param("number", "1"))
+                        .param("number", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -106,7 +105,7 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/firestations")
-                .param("number", "999"))
+                        .param("number", "999"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -133,7 +132,7 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/firestations/address")
-                .param("address", "123 Main St"))
+                        .param("address", "123 Main St"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -151,7 +150,7 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/firestations/address")
-                .param("address", "Unknown Address"))
+                        .param("address", "Unknown Address"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -176,8 +175,8 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/firestations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"address\":\"123 Main St\",\"station\":\"1\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"address\":\"123 Main St\",\"station\":\"1\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.address", is("123 Main St")))
@@ -203,8 +202,8 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/firestations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"address\":\"123 Main St\",\"station\":\"2\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"address\":\"123 Main St\",\"station\":\"2\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.address", is("123 Main St")))
@@ -221,7 +220,7 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/firestations")
-                .param("address", "123 Main St"))
+                        .param("address", "123 Main St"))
                 .andExpect(status().isNoContent());
 
         verify(fireStationService, times(1)).deleteByAddress("123 Main St");
@@ -234,7 +233,7 @@ public class FireStationControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/firestations/station")
-                .param("number", "1"))
+                        .param("number", "1"))
                 .andExpect(status().isNoContent());
 
         verify(fireStationService, times(1)).deleteByStation("1");

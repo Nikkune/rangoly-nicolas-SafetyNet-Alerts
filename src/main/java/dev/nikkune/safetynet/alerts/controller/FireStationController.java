@@ -24,10 +24,9 @@ import java.util.List;
 @RequestMapping("/firestations")
 @Validated
 public class FireStationController {
+    private static final Logger logger = LogManager.getLogger(FireStationController.class);
     private final FireStationService service;
     private final FireStationMapper mapper;
-
-    private static final Logger logger = LogManager.getLogger(FireStationController.class);
 
     public FireStationController(FireStationService service, FireStationMapper mapper) {
         this.service = service;
@@ -101,7 +100,7 @@ public class FireStationController {
     /**
      * Creates a new fire station with the given information.
      * <p>
-     * The request body contains the fire station information and the response is an HTTP 200 (OK) status
+     * The request body contains the fire station information, and the response is an HTTP 200 (OK) status,
      * and the created fire station is returned in the response body.
      * <p>
      * If a fire station with the same address already exists, a Runtime exception is thrown with the message
@@ -123,9 +122,9 @@ public class FireStationController {
     /**
      * Updates an existing fire station in the database.
      * <p>
-     * The fire station is identified by its address and the request body contains the updated information.
+     * The fire station is identified by its address, and the request body contains the updated information.
      * <p>
-     * The response is an HTTP 200 (OK) status and the updated fire station is returned in the response body.
+     * The response is an HTTP 200 (OK) status, and the updated fire station is returned in the response body.
      * <p>
      * If the fire station is not found, a Runtime exception is thrown with the message "Fire station not found".
      *

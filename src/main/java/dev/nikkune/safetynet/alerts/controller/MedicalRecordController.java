@@ -24,10 +24,9 @@ import java.util.List;
 @RequestMapping("/medicalrecord")
 @Validated
 public class MedicalRecordController {
+    private static final Logger logger = LogManager.getLogger(MedicalRecordController.class);
     private final MedicalRecordService service;
     private final MedicalRecordMapper mapper;
-
-    private static final Logger logger = LogManager.getLogger(MedicalRecordController.class);
 
     public MedicalRecordController(MedicalRecordService service, MedicalRecordMapper mapper) {
         this.mapper = mapper;

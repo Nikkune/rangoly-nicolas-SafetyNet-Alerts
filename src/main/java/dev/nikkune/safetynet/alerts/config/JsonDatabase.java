@@ -86,12 +86,8 @@ public class JsonDatabase {
             ArrayNode medicalRecordsNode = objectMapper.valueToTree(medicalRecords());
 
             //Ensure correct data is saved
-            personsNode.forEach(person -> {
-                ((ObjectNode) person).remove("medicalRecord");
-            });
-            fireStationsNode.forEach(fireStation -> {
-                ((ObjectNode) fireStation).remove("persons");
-            });
+            personsNode.forEach(person -> ((ObjectNode) person).remove("medicalRecord"));
+            fireStationsNode.forEach(fireStation -> ((ObjectNode) fireStation).remove("persons"));
 
             // Add the data to the root node
             rootNode.set("persons", personsNode);

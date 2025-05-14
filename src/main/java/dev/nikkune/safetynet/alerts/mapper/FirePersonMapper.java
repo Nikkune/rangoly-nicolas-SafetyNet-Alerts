@@ -9,13 +9,13 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface FirePersonMapper {
-    @Mapping(target = "age", source = "medicalRecord.birthdate", qualifiedByName = "birthdateToAge")
-    @Mapping(target = "medications", source = "medicalRecord.medications")
-    @Mapping(target = "allergies", source = "medicalRecord.allergies")
-    FirePersonDTO toDTO (Person person);
-
     @Named("birthdateToAge")
     static int birthdateToAge(String birthdate) {
         return AgeCalculator.calculateAge(birthdate);
     }
+
+    @Mapping(target = "age", source = "medicalRecord.birthdate", qualifiedByName = "birthdateToAge")
+    @Mapping(target = "medications", source = "medicalRecord.medications")
+    @Mapping(target = "allergies", source = "medicalRecord.allergies")
+    FirePersonDTO toDTO(Person person);
 }

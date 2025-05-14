@@ -16,8 +16,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -110,8 +110,8 @@ public class PersonControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/person")
-                .param("firstName", "John")
-                .param("lastName", "Doe"))
+                        .param("firstName", "John")
+                        .param("lastName", "Doe"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("John")))
@@ -154,7 +154,7 @@ public class PersonControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/person/address")
-                .param("address", "123 Main St"))
+                        .param("address", "123 Main St"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -196,8 +196,8 @@ public class PersonControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/person")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"address\":\"123 Main St\",\"city\":\"Anytown\",\"zip\":\"12345\",\"phone\":\"555-555-1234\",\"email\":\"john.doe@example.com\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"address\":\"123 Main St\",\"city\":\"Anytown\",\"zip\":\"12345\",\"phone\":\"555-555-1234\",\"email\":\"john.doe@example.com\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("John")))
@@ -238,8 +238,8 @@ public class PersonControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/person")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"address\":\"456 Main St\",\"city\":\"Othertown\",\"zip\":\"54321\",\"phone\":\"555-555-5678\",\"email\":\"john.doe.updated@example.com\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"address\":\"456 Main St\",\"city\":\"Othertown\",\"zip\":\"54321\",\"phone\":\"555-555-5678\",\"email\":\"john.doe.updated@example.com\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("John")))
@@ -261,8 +261,8 @@ public class PersonControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/person")
-                .param("firstName", "John")
-                .param("lastName", "Doe"))
+                        .param("firstName", "John")
+                        .param("lastName", "Doe"))
                 .andExpect(status().isNoContent());
 
         verify(personService, times(1)).delete("John", "Doe");

@@ -3,7 +3,6 @@ package dev.nikkune.safetynet.alerts.mapper;
 import dev.nikkune.safetynet.alerts.dto.PersonDTO;
 import dev.nikkune.safetynet.alerts.model.Person;
 import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
 
 /**
  * The PersonMapper interface provides methods for converting between

@@ -40,7 +40,7 @@ public class MedicalRecordService {
      * with the message "Medical record not found".
      *
      * @param firstName the first name of the person to retrieve
-     * @param lastName the last name of the person to retrieve
+     * @param lastName  the last name of the person to retrieve
      * @return the medical record associated with the given first and last name
      * @throws RuntimeException if no medical record is associated with the given first and last name
      */
@@ -118,7 +118,7 @@ public class MedicalRecordService {
      * with the message "Medical record not found".
      *
      * @param firstName the first name of the person to delete
-     * @param lastName the last name of the person to delete
+     * @param lastName  the last name of the person to delete
      * @throws RuntimeException if no medical record is found with the given first and last name
      */
     public void delete(String firstName, String lastName) throws RuntimeException {

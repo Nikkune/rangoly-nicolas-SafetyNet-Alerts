@@ -9,11 +9,11 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface ChildAlertChildMapper {
-    @Mapping(target = "age", source = "medicalRecord.birthdate", qualifiedByName = "birthdateToAge")
-    ChildAlertChildDTO toDTO(Person person);
-
     @Named("birthdateToAge")
     static int birthdateToAge(String birthdate) {
         return AgeCalculator.calculateAge(birthdate);
     }
+
+    @Mapping(target = "age", source = "medicalRecord.birthdate", qualifiedByName = "birthdateToAge")
+    ChildAlertChildDTO toDTO(Person person);
 }

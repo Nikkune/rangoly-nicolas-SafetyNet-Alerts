@@ -23,10 +23,9 @@ import java.util.List;
 @RequestMapping("/person")
 @Validated
 public class PersonController {
+    private static final Logger logger = LogManager.getLogger(PersonController.class);
     private final PersonService service;
     private final PersonMapper mapper;
-
-    private static final Logger logger = LogManager.getLogger(PersonController.class);
 
     public PersonController(PersonService service, PersonMapper mapper) {
         this.service = service;
