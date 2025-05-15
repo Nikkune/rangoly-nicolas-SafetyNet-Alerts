@@ -268,18 +268,14 @@ public class URLServiceTest {
         // Verify first address
         FloodAddressDTO address1 = result.stream().filter(a -> a.getAddress().equals("123 Main St")).findFirst().orElse(null);
         assertNotNull(address1);
-        assertEquals(3, address1.getCoverage().getPersons().size());
-        assertEquals(2, address1.getCoverage().getNumberOfAdults());
-        assertEquals(1, address1.getCoverage().getNumberOfChildren());
+        assertEquals(3, address1.getResidents().size());
 
         // Verify the second address
         FloodAddressDTO address2 = result.stream().filter(a -> a.getAddress().equals("456 Oak St")).findFirst().orElse(null);
         assertNotNull(address2);
-        assertEquals(1, address2.getCoverage().getPersons().size());
-        assertEquals(1, address2.getCoverage().getNumberOfAdults());
-        assertEquals(0, address2.getCoverage().getNumberOfChildren());
+        assertEquals(1, address2.getResidents().size());
 
-        verify(coveragePersonMapper, times(4)).toDTO(any(Person.class));
+//        verify(coveragePersonMapper, times(4)).toDTO(any(Person.class));
     }
 
     @Test

@@ -42,6 +42,7 @@ public class URLController {
             logger.error("No person found for station number : {}", stationNumber);
             return new ResponseEntity<>(List.of(), HttpStatus.NOT_FOUND);
         }
+        logger.info("Returning {} persons covered by station {}", fireStationCoverageDTO.getPersons().size(), stationNumber);
         return ResponseEntity.ok(List.of(fireStationCoverageDTO));
     }
 

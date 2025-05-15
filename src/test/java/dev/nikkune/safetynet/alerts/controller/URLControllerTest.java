@@ -23,6 +23,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class URLControllerTest {
 
+    @Test
+    public void testGetFloodPersonCoveredByStation() throws Exception {
+        // Arrange
+        List<FloodAddressDTO> floodAddresses = new ArrayList<>();
+        FloodAddressDTO floodAddress = new FloodAddressDTO();
+        floodAddress.setAddress("123 Main St");
+
+        List<FirePersonDTO> residents = new ArrayList<>();
+        FirePersonDTO resident = new FirePersonDTO();
+        resident.setFirstName("John");
+        resident.setLastName("Doe");
+        resident.setPhone("555-555-1234");
+        resident.setAge(30);
+        resident.setMedications(List.of("medication1", "medication2"));
+        resident.setAllergies(List.of("allergy1"));
+        residents.add(resident);
+
+        floodAddress.setResidents(residents);
+        floodAddresses.add(floodAddress);
+
+        when(urlService.getFloodPersonCoveredByStation("1")).thenReturn(floodAddresses);
+
+        // Act & Assert
+        mockMvc.perform(get("/flood/stations")
+                        .param("stations", "1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].address", is("123 Main St")))
+                .andExpect(jsonPath("$[0].residents", hasSize(1)))
+                .andExpect(jsonPath("$[0].residents[0].firstName", is("John")))
+                .andExpect(jsonPath("$[0].residents[0].lastName", is("Doe")))
+                .andExpect(jsonPath("$[0].residents[0].phone", is("555-555-1234")))
+                .andExpect(jsonPath("$[0].residents[0].age", is(30)))
+                .andExpect(jsonPath("$[0].residents[0].medications", hasSize(2)))
+                .andExpect(jsonPath("$[0].residents[0].medications", containsInAnyOrder("medication1", "medication2")))
+                .andExpect(jsonPath("$[0].residents[0].allergies", hasSize(1)))
+                .andExpect(jsonPath("$[0].residents[0].allergies[0]", is("allergy1")));
+
+        verify(urlService, times(1)).getFloodPersonCoveredByStation("1");
+    }
+
     private MockMvc mockMvc;
 
     @Mock
@@ -230,46 +272,6 @@ public class URLControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         verify(urlService, times(1)).getFire("Unknown Address");
-    }
-
-    @Test
-    public void testGetFloodPersonCoveredByStation() throws Exception {
-        // Arrange
-        List<FloodAddressDTO> floodAddressDTOs = new ArrayList<>();
-        FloodAddressDTO floodAddressDTO = new FloodAddressDTO();
-        floodAddressDTO.setAddress("123 Main St");
-        FireStationCoverageDTO coverageDTO = new FireStationCoverageDTO();
-        List<FireStationCoveragePersonDTO> persons = new ArrayList<>();
-        FireStationCoveragePersonDTO person = new FireStationCoveragePersonDTO();
-        person.setFirstName("John");
-        person.setLastName("Doe");
-        person.setAddress("123 Main St");
-        person.setPhone("555-555-1234");
-        persons.add(person);
-        coverageDTO.setPersons(persons);
-        coverageDTO.setNumberOfAdults(1);
-        coverageDTO.setNumberOfChildren(0);
-        floodAddressDTO.setCoverage(coverageDTO);
-        floodAddressDTOs.add(floodAddressDTO);
-
-        when(urlService.getFloodPersonCoveredByStation("1,2")).thenReturn(floodAddressDTOs);
-
-        // Act & Assert
-        mockMvc.perform(get("/flood/stations")
-                        .param("stations", "1,2"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].address", is("123 Main St")))
-                .andExpect(jsonPath("$[0].coverage.persons", hasSize(1)))
-                .andExpect(jsonPath("$[0].coverage.persons[0].firstName", is("John")))
-                .andExpect(jsonPath("$[0].coverage.persons[0].lastName", is("Doe")))
-                .andExpect(jsonPath("$[0].coverage.persons[0].address", is("123 Main St")))
-                .andExpect(jsonPath("$[0].coverage.persons[0].phone", is("555-555-1234")))
-                .andExpect(jsonPath("$[0].coverage.numberOfAdults", is(1)))
-                .andExpect(jsonPath("$[0].coverage.numberOfChildren", is(0)));
-
-        verify(urlService, times(1)).getFloodPersonCoveredByStation("1,2");
     }
 
     @Test

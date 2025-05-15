@@ -3,6 +3,7 @@ package dev.nikkune.safetynet.alerts.utils;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * The AgeCalculator class provides utility methods for calculating
@@ -29,5 +30,13 @@ public class AgeCalculator {
         }
         LocalDate currentDate = LocalDate.now();
         return Period.between(birthDate, currentDate).getYears();
+    }
+
+    public static long numberOfChildren(List<String> datesOfBirth) {
+        return datesOfBirth.stream().filter(dateOfBirth -> calculateAge(dateOfBirth) <= 18).count();
+    }
+
+    public static long numberOfAdults(List<String> datesOfBirth) {
+        return datesOfBirth.stream().filter(dateOfBirth -> calculateAge(dateOfBirth) > 18).count();
     }
 }

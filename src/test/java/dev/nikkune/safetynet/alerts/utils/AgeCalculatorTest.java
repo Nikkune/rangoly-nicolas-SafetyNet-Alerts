@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +34,26 @@ public class AgeCalculatorTest {
     }
 
     @Test
+    public void testNumberOfAdults() {
+        // Arrange
+        List<String> datesOfBirth = List.of("01/01/1980", "01/01/2010", "01/01/1990");
+        // Act
+        long numberOfAdults = AgeCalculator.numberOfAdults(datesOfBirth);
+        // Assert
+        assertEquals(2, numberOfAdults); // Two dates correspond to adults
+    }
+
+    @Test
+    public void testNumberOfAdultsWithEmptyList() {
+        // Arrange
+        List<String> datesOfBirth = List.of();
+        // Act
+        long numberOfAdults = AgeCalculator.numberOfAdults(datesOfBirth);
+        // Assert
+        assertEquals(0, numberOfAdults); // No dates provided
+    }
+
+    @Test
     public void testNullBirthdate() {
         // Arrange
 
@@ -56,5 +77,25 @@ public class AgeCalculatorTest {
         LocalDate birthDate = LocalDate.parse(birthdate, formatter);
         LocalDate currentDate = LocalDate.now();
         return Period.between(birthDate, currentDate).getYears();
+    }
+
+    @Test
+    public void testNumberOfChildren() {
+        // Arrange
+        List<String> datesOfBirth = List.of("01/01/2010", "01/01/2020", "01/01/2000");
+        // Act
+        long numberOfChildren = AgeCalculator.numberOfChildren(datesOfBirth);
+        // Assert
+        assertEquals(2, numberOfChildren);
+    }
+
+    @Test
+    public void testNumberOfChildrenWithEmptyList() {
+        // Arrange
+        List<String> datesOfBirth = List.of();
+        // Act
+        long numberOfChildren = AgeCalculator.numberOfChildren(datesOfBirth);
+        // Assert
+        assertEquals(0, numberOfChildren); // No dates provided
     }
 }

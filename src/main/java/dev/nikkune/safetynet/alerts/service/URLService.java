@@ -50,8 +50,8 @@ public class URLService {
         List<FireStation> fireStations = jsonDatabase.fireStations().stream().filter(fireStation -> fireStation.getStation().equals(stationNumber)).toList();
         List<Person> people = fireStations.stream().flatMap(fireStation -> fireStation.getPersons().stream()).toList();
         List<FireStationCoveragePersonDTO> personDTOS = people.stream().map(coveragePersonMapper::toDTO).toList();
-        long numberOfChildren = people.stream().filter(person -> AgeCalculator.calculateAge(person.getMedicalRecord().getBirthdate()) <= 18).count();
-        long numberOfAdult = people.size() - numberOfChildren;
+        long numberOfChildren = AgeCalculator.numberOfChildren(people.stream().map(person -> person.getMedicalRecord().getBirthdate()).toList());
+        long numberOfAdult = AgeCalculator.numberOfAdults(people.stream().map(person -> person.getMedicalRecord().getBirthdate()).toList());
         FireStationCoverageDTO fireStationCoverageDTO = new FireStationCoverageDTO();
         fireStationCoverageDTO.setPersons(personDTOS);
         fireStationCoverageDTO.setNumberOfAdults((int) numberOfAdult);
@@ -140,7 +140,8 @@ public class URLService {
         return fireStations.stream().map(fireStation -> {
             FloodAddressDTO floodAddressDTO = new FloodAddressDTO();
             floodAddressDTO.setAddress(fireStation.getAddress());
-            floodAddressDTO.setCoverage(getPersonCoveredByStation(fireStation.getStation()));
+            List<FirePersonDTO> residents = fireStation.getPersons().stream().map(firePersonMapper::toDTO).toList();
+            floodAddressDTO.setResidents(residents);
             return floodAddressDTO;
         }).toList();
     }
